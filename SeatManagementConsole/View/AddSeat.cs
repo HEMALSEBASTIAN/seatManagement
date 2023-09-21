@@ -17,7 +17,7 @@ namespace SeatManagementConsole.View
         public void DoWork()
         {
             Console.Clear();
-            IEntityManager<ViewFacilityDTO> ViewFacilityManager = new EntityManager<ViewFacilityDTO>("api/Report/ViewFacility");
+            IEntityManager<ViewFacilityDTO> ViewFacilityManager = new EntityManager<ViewFacilityDTO>("api/Facility");
             IEntityManager<Seat> seatManager = new EntityManager<Seat>("api/Seat");
 
             Console.WriteLine("Available Office Locations");

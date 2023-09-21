@@ -1,4 +1,5 @@
-﻿using SeatManagement.DTO;
+﻿using SeatManagement.CustomException;
+using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
 
@@ -31,36 +32,71 @@ namespace SeatManagement.Implementation
             _repositaryCabin.Add(CabinList);
         }
 
-        public Cabin Allocate(AllocateDTO cabin)
+        //public Cabin Allocate(AllocateDTO cabin)
+        //{
+        //    var item = _repositaryCabin.GetById(cabin.SeatId);
+        //    var employee = _repositaryEmployee.GetById((int)cabin.EmployeeId);
+
+        //    if (item == null || employee == null)
+        //        return null;
+
+        //    item.EmployeeId = cabin.EmployeeId;
+        //    employee.IsAllocated= true;
+        //    _repositaryCabin.Update();
+        //    _repositaryEmployee.Update();
+        //    return item;
+        //}
+
+        public void AllocateCabin(int cabinId, int employeeId)
         {
-            var item = _repositaryCabin.GetById(cabin.SeatId);
-            var employee = _repositaryEmployee.GetById((int)cabin.EmployeeId);
+            var cabin = _repositaryCabin.GetById(cabinId);
+            var employee = _repositaryEmployee.GetById(employeeId);
 
-            if (item == null || employee == null)
-                return null;
+            if (cabin == null)
+                throw new NoDataException("Cabin does not exist");
+            else if (employee == null)
+                throw new NoDataException("Employee does not exist");
+            if (employee.IsAllocated == true)
+                throw new EmployeeAlreadyAllocatedException("Employee already allocated");
+            else if (cabin.EmployeeId != null)
+                throw new AllocationException("Cabin already allocated");
 
-            item.EmployeeId = cabin.EmployeeId;
-            employee.IsAllocated= true;
+            cabin.EmployeeId = employeeId;
+            employee.IsAllocated = true;
             _repositaryCabin.Update();
             _repositaryEmployee.Update();
-            return item;
         }
 
-        public Cabin Deallocate(AllocateDTO cabin)
+        //public Cabin Deallocate(AllocateDTO cabin)
+        //{
+        //    var item = _repositaryCabin.GetById(cabin.SeatId);
+        //    var employee = _repositaryEmployee.GetById((int)cabin.EmployeeId);
+
+        //    if (item == null || employee == null)
+        //        return null;
+
+        //    item.EmployeeId = null;
+        //    employee.IsAllocated = false;
+        //    _repositaryCabin.Update();
+        //    _repositaryEmployee.Update();
+        //    return item;
+        //}
+
+        public void DeallocateCabin(int cabinId)
         {
-            var item = _repositaryCabin.GetById(cabin.SeatId);
+            var cabin = _repositaryCabin.GetById(cabinId);
+
+            if (cabin == null)
+                throw new NoDataException("Cabin does not exist");
+            else if (cabin.EmployeeId == null)
+                throw new AllocationException("Cabin is not yet allocated!");
+
             var employee = _repositaryEmployee.GetById((int)cabin.EmployeeId);
-
-            if (item == null || employee == null)
-                return null;
-
-            item.EmployeeId = null;
+            cabin.EmployeeId = null;
             employee.IsAllocated = false;
             _repositaryCabin.Update();
             _repositaryEmployee.Update();
-            return item;
         }
-
 
         public List<Cabin> Get()
         {

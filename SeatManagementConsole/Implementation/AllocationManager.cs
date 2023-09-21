@@ -1,4 +1,5 @@
-﻿using SeatManagementConsole.Interface;
+﻿using SeatManagement.Models;
+using SeatManagementConsole.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,16 +16,15 @@ namespace SeatManagementConsole.Implementation
         {
             _endPoint=endPoint;
         }
-        public void Allocate(T obj)
+        public int Allocate(int assetId, int employeeId)
         {
-            IAPICall<T> aPICall = new APICall<T>(_endPoint + "/allocate");
-            aPICall.Update(obj);
+            IAPICall<T> aPICall = new APICall<T>(_endPoint + $"/{assetId}?employeeId={employeeId}");
+            return aPICall.Update();
         }
-
-        public void Deallocate(T obj)
+        public int Deallocate(int assetId)
         {
-            IAPICall<T> aPICall = new APICall<T>(_endPoint + "/deallocate");
-            aPICall.Update(obj);
+            IAPICall<T> aPICall = new APICall<T>(_endPoint + $"/{assetId}");
+            return aPICall.Update();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace SeatManagement.Interface
 {
     public interface IReportService
     {
-		public List<ViewFacilityDTO> GetFacilityList();
+		//public List<ViewFacilityDTO> GetFacilityList();
 		public List<ViewAllocationDTO> GetSeatAllocatedView();
         public List<ViewAllocationDTO> GetSeatUnAllocatdView();
         public List<ViewAllocationDTO> GetSeatAllocatedView(int facilityId);

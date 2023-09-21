@@ -17,7 +17,7 @@ namespace SeatManagementConsole.View
         public void DoWork()
         {
             IEntityManager<ViewAllocationDTO> ViewAllocationManager = new EntityManager<ViewAllocationDTO>("api/Report?type=cabin&&action=ViewAllocatedCabin");
-            IEntityManager<AllocateDTO> CabinAllocationManager = new EntityManager<AllocateDTO>("api/cabin?action=deallocate");
+            IAllocationManager<Cabin> CabinAllocationManager = new AllocationManager<Cabin>("api/cabin");
 
             Console.WriteLine("-----------------Cabin Allocation System-----------------");
             Console.WriteLine("Showing All Allocated Cabin");
@@ -27,24 +27,20 @@ namespace SeatManagementConsole.View
             {
                 Console.WriteLine($"{item.SeatId}    {item.CityAbbrevation}-{item.BuildingAbbrevation}-{item.FacilityFloor}-{item.FacilityName}-{item.SeatNo}   {item.EmployeeName}");
             }
-            while (true)
-            {
-                Console.Write("Enter the cabin id you want to deallocate: ");
-                int cabinId = Convert.ToInt32(Console.ReadLine());
-                if (AllocatedCabinList.Any(x => x.SeatId == cabinId))
-                {
-                    var AllocatedCabin = AllocatedCabinList.Where(x => x.SeatId == cabinId).FirstOrDefault();
-                    Console.WriteLine($"{AllocatedCabin.EmployeeName} has been deallocated from seat no: {AllocatedCabin.SeatNo}");
+            Console.Write("Enter the cabin id you want to deallocate: ");
+            int cabinId = Convert.ToInt32(Console.ReadLine());
 
-                    AllocateDTO cabinAllocateDTO = new AllocateDTO()
-                    {
-                        SeatId = cabinId,
-                        EmployeeId = AllocatedCabin.EmployeeId,
-                    };
-                    CabinAllocationManager.Update(cabinAllocateDTO);
-                    break;
-                }
-            }
+
+            int response=CabinAllocationManager.Deallocate(cabinId);
+            if (response == 0)
+            {
+                var AllocatedCabin = AllocatedCabinList.Where(x => x.SeatId == cabinId).FirstOrDefault();
+                Console.WriteLine($"{AllocatedCabin.EmployeeName} has been deallocated from cabin no: {AllocatedCabin.SeatNo}");
+                Console.WriteLine("Cabin deallocation successfull");
+            } 
+            else
+                Console.WriteLine("cabin deallocation unsuccessfull");
+
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
         }

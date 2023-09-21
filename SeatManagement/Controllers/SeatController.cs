@@ -3,6 +3,7 @@ using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
+using System.Security.Cryptography;
 
 namespace SeatManagement.Controllers
 {
@@ -22,12 +23,6 @@ namespace SeatManagement.Controllers
             return Ok(_repositary.Get());
         }
 
-        [HttpGet("pagination")]
-        public IActionResult GetByPages([FromQuery] int pageNumber, [FromQuery] int pageSize)
-        {
-            return Ok(_repositary.Get(pageNumber, pageSize));
-        }
-
         [HttpPost] //Adding seat in bulk
         public IActionResult Post(List <SeatDTO> seatDTOList)
         {
@@ -35,45 +30,41 @@ namespace SeatManagement.Controllers
             return Ok();
         }
         
-        [HttpPatch] //ALocating and deallocating seats
-        public IActionResult Allocation([FromQuery] string action, AllocateDTO seat)
+        [HttpPatch("{seatId}")] //For allocating or deallocating seat
+        public IActionResult Allocate(int seatId, int? employeeId)
         {
             try
             {
-                Seat item;
-                if (string.Equals(action, "allocate", StringComparison.OrdinalIgnoreCase))
+                if(employeeId.HasValue)
                 {
-                    item = _repositary.AllocateSeat(seat);
-                    return Ok("Seat Allocation successfull");
-                }
-                else if (string.Equals(action, "deallocate", StringComparison.OrdinalIgnoreCase))
-                {
-                    item = _repositary.DeAllocateSeat(seat);
-                    return Ok("Seat UnAllocation successfull");
+                    _repositary.AllocateSeat(seatId, employeeId.Value);
                 }
                 else
-                    return BadRequest("Invalid action parameter");
+                {
+                    _repositary.DeAllocateSeat(seatId);
+                }
+                return Ok();
+            }
+            catch(NoDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(EmployeeAlreadyAllocatedException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch(AllocationException ex)
+            {
+                return Conflict(ex.Message);
             }
             catch(Exception ex)
             {
-                if (ex is EmployeeAlreadyAllocatedException)
-                    return Conflict(ex.Message);
-                else if (ex is AllocationException)
-                    return Conflict(ex.Message);
-                else if (ex is NoDataException)
-                    return NotFound(ex.Message);
-                else 
-                    return BadRequest(ex.Message);
+                return BadRequest(ex.Message);
             }
-            
+
         }
 
-
-
-
-
-        [Route("id")]
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
             var item = _repositary.GetById(id);
@@ -83,6 +74,9 @@ namespace SeatManagement.Controllers
             }
             return Ok(item);
         }
+
+
+
 
         //[Route("allocate")]
         //[HttpPatch]
@@ -94,6 +88,14 @@ namespace SeatManagement.Controllers
         //    return Ok("Success");
         //}
 
+        //[HttpGet("pagination")]
+        //public IActionResult GetByPages([FromQuery] int pageNumber, [FromQuery] int pageSize)
+        //{
+        //    return Ok(_repositary.Get(pageNumber, pageSize));
+        //}
+
+
+
         //[Route("deallocate")]
         //[HttpPatch]
         //public IActionResult DeAllocate(AllocateDTO seat)
@@ -102,6 +104,39 @@ namespace SeatManagement.Controllers
         //    if (item == null)
         //        return NotFound();
         //    return Ok();
+        //}
+
+        //[HttpPatch] //ALocating and deallocating seats
+        //public IActionResult Allocation([FromQuery] string action, AllocateDTO seat)
+        //{
+        //    try
+        //    {
+        //        Seat item;
+        //        if (string.Equals(action, "allocate", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            item = _repositary.AllocateSeat(seat);
+        //            return Ok("Seat Allocation successfull");
+        //        }
+        //        else if (string.Equals(action, "deallocate", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            item = _repositary.DeAllocateSeat(seat);
+        //            return Ok("Seat UnAllocation successfull");
+        //        }
+        //        else
+        //            return BadRequest("Invalid action parameter");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (ex is EmployeeAlreadyAllocatedException)
+        //            return Conflict(ex.Message);
+        //        else if (ex is AllocationException)
+        //            return Conflict(ex.Message);
+        //        else if (ex is NoDataException)
+        //            return NotFound(ex.Message);
+        //        else
+        //            return BadRequest(ex.Message);
+        //    }
+
         //}
 
     }

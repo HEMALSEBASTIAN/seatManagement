@@ -30,25 +30,26 @@ namespace SeatManagement.Controllers
         
 
         
-        [HttpGet] //get city details by id
-        [Route("id")]
-        public IActionResult Get(int id) 
-        {
-            var item=_repositary.GetById(id);
-            if(item == null) 
-                return NotFound();
-            return Ok(item);
-        }
-        [HttpPatch] //Update city by id
-        [Route("id")]
-        public IActionResult Update(LookUpCity City)
-        {
-            var item = _repositary.Update(City);
-            if(item == null)
-            {
-                return NotFound();
-            }
-            return Ok(); 
-        }
+        //[HttpGet("{id}")] //get city details by id
+        //public IActionResult Get(int id) 
+        //{
+        //    var item=_repositary.GetById(id);
+        //    if(item == null) 
+        //        return NotFound();
+        //    return Ok(item);
+        //}
+
+
+
+        //[HttpPatch("{id}")] //Update city by id
+        //public IActionResult Update(int id, LookUpCityDTO City)
+        //{
+        //    var item = _repositary.Update(id,City);
+        //    if(item == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(); 
+        //}
     }
 }

@@ -8,7 +8,7 @@ namespace SeatManagementConsole.Interface
 {
     public interface IAllocationManager<T> where T : class
     {
-        public void Allocate(T obj);
-        public void Deallocate(T obj);
+        public int Allocate(int assetId, int employeeId);
+        public int Deallocate(int assetId);
     }
 }

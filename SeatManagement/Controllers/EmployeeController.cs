@@ -36,9 +36,7 @@ namespace SeatManagement.Controllers
 
 
 
-
-        [Route("id")]
-        [HttpGet] //get emplpoyee details
+        [HttpGet("{id}")] //get emplpoyee details
         public IActionResult Get(int id)
         {
             var item=_repositary.GetById(id);
@@ -46,15 +44,17 @@ namespace SeatManagement.Controllers
                 return NotFound();
             return Ok(item);
         }
-        [Route("id")]
-        [HttpPatch] //update employee details
-        public IActionResult Update(Employee employee)
-        {
-            var item = _repositary.Update(employee);
-            if(item == null)
-                return NotFound();
-            return Ok();
-        }
+
+
+        //[Route("id")]
+        //[HttpPatch] //update employee details
+        //public IActionResult Update(Employee employee)
+        //{
+        //    var item = _repositary.Update(employee);
+        //    if(item == null)
+        //        return NotFound();
+        //    return Ok();
+        //}
 
 
         //[HttpPost]

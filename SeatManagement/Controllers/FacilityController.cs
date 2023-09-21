@@ -15,7 +15,7 @@ namespace SeatManagement.Controllers
         {
             _repositary = repositary;
         }
-        [HttpGet]  //get all faciltiy details
+        [HttpGet]  //get all faciltiy details with city and building name
         public IActionResult Get()
         {
             return Ok(_repositary.Get());
@@ -29,11 +29,7 @@ namespace SeatManagement.Controllers
         }
 
 
-
-
-
-        [Route("id")]
-        [HttpGet] //get a faciltiy detail by id
+        [HttpGet("{id}")] //get a faciltiy detail by id
         public IActionResult Get(int id)
         {
             var item= _repositary.GetById(id);
@@ -41,15 +37,17 @@ namespace SeatManagement.Controllers
                 return NotFound();
             return Ok(item);
         }
-        [Route("id")]
-        [HttpPatch] //update a facility
-        public IActionResult Update(Facility facility)
-        {
-            var item=_repositary.Update(facility);
-            if(item==null)
-                return NotFound();
-            return Ok();
-        }
+
+
+        //[Route("id")]
+        //[HttpPatch] //update a facility
+        //public IActionResult Update(Facility facility)
+        //{
+        //    var item=_repositary.Update(facility);
+        //    if(item==null)
+        //        return NotFound();
+        //    return Ok();
+        //}
 
         //[HttpGet("view")]
         //public IActionResult View()

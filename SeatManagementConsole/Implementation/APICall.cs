@@ -114,5 +114,22 @@ namespace SeatManagementConsole.Implementation
             var responseContent = response.Content.ReadAsStringAsync().Result;
             Console.WriteLine($"Response content : {responseContent}");
         }
+
+        public int Update()
+        {
+            var response = _client.PatchAsync(_endPoint, null).Result;
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+            if(response.StatusCode==HttpStatusCode.Conflict )
+            {
+                Console.WriteLine($"Response content : {responseContent}");
+                return -1;
+            }
+            else if(response.StatusCode==HttpStatusCode.NotFound ) 
+            {
+                Console.WriteLine($"Response content : {responseContent}");
+                return -1;
+            }
+            return 0;
+        }
     }
 }

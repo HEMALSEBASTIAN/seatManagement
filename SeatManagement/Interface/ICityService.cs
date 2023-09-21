@@ -9,6 +9,6 @@ namespace SeatManagement.Interface
         public int Add(LookUpCityDTO cityDTO);
         public List<LookUpCity> Get();
         public LookUpCity GetById(int id);
-        public LookUpCity Update(LookUpCity City);
+        public LookUpCity Update(int id, LookUpCityDTO City);
     }
 }

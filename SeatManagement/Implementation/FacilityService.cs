@@ -26,10 +26,20 @@ namespace SeatManagement.Implementation
             return NewFacility.FacilityId;
 
         }
-
-        public List<Facility> Get()
+        
+        public List<ViewFacilityDTO> Get()
         {
-            return _repositary.GetAll().ToList();
+            return _repositary.GetAll()
+                .Include(x => x.LookUpCity)
+                .Include(x => x.LookUpBuilding)
+                .Select(x => new ViewFacilityDTO
+                {
+                    FacilityId = x.FacilityId,
+                    FacilityName = x.FacilityName,
+                    FacilityFloor = x.FacilityFloor,
+                    CityName = x.LookUpCity.CityName,
+                    BuildingName = x.LookUpBuilding.BuildingName
+                }).ToList();
         }
 
         public Facility GetById(int id)

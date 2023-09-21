@@ -34,9 +34,9 @@ namespace SeatManagement.Implementation
             var item = _repositary.GetById(id);
             return item;
         }
-        public LookUpCity Update(LookUpCity City)
+        public LookUpCity Update(int id, LookUpCityDTO City)
         {
-            var item = _repositary.GetById(City.CityId);
+            var item = _repositary.GetById(id);
             if (item == null)
             {
                 return null;

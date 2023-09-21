@@ -7,10 +7,12 @@ namespace SeatManagement.Interface
     {
         public List<Seat> Get();
         public List<Seat> Get(int pageNumber, int pageSize);
-        public void AddSeat(SeatDTO seatDTO);
         public void AddSeat(List<SeatDTO> seatDTOList);
-        public Seat AllocateSeat(AllocateDTO seat);
-        public Seat DeAllocateSeat(AllocateDTO seat);
+        public void AllocateSeat(int seatId, int employeeId);
+        public void DeAllocateSeat(int seatId);
         public Seat GetById(int id);
+        //public Seat DeAllocateSeat(AllocateDTO seat);
+        //public Seat AllocateSeat(AllocateDTO seat);
+        //public void AddSeat(SeatDTO seatDTO);
     }
 }

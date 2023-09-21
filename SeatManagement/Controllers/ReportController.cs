@@ -21,11 +21,11 @@ namespace SeatManagement.Controllers
             _repositary=repositary;
             _memoryCache = memoryCache;
         }
-        [HttpGet("ViewFacility")] //Return all facility details
-        public IActionResult FacilityView()
-        {
-            return Ok(_repositary.GetFacilityList());
-        }
+        //[HttpGet("ViewFacility")] //Return all facility details
+        //public IActionResult FacilityView()
+        //{
+        //    return Ok(_repositary.GetFacilityList());
+        //}
 
         //[HttpGet("ViewAllocatedSeat")]
         //public IActionResult ViewAllocatedSeat()

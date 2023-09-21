@@ -24,21 +24,21 @@ namespace SeatManagement.Implementation
             _repositaryViewCabinAllocation=repositaryViewCabinAllocation;
             _repositaryViewMeetingRoom = repositaryViewMeetingRoom;
         }
-        public List<ViewFacilityDTO> GetFacilityList()
-        {
-            var item = _repositaryViewFacility.GetAll()
-                .Include(x => x.LookUpCity)
-                .Include(x => x.LookUpBuilding)
-                .Select(x => new ViewFacilityDTO
-                {
-                    FacilityFloor = x.FacilityFloor,
-                    FacilityId = x.FacilityId,
-                    CityName = x.LookUpCity.CityName,
-                    BuildingName = x.LookUpBuilding.BuildingName,
-                    FacilityName = x.FacilityName
-                }).ToList();
-            return item;
-        }
+        //public List<ViewFacilityDTO> GetFacilityList()
+        //{
+        //    var item = _repositaryViewFacility.GetAll()
+        //        .Include(x => x.LookUpCity)
+        //        .Include(x => x.LookUpBuilding)
+        //        .Select(x => new ViewFacilityDTO
+        //        {
+        //            FacilityFloor = x.FacilityFloor,
+        //            FacilityId = x.FacilityId,
+        //            CityName = x.LookUpCity.CityName,
+        //            BuildingName = x.LookUpBuilding.BuildingName,
+        //            FacilityName = x.FacilityName
+        //        }).ToList();
+        //    return item;
+        //}
         public List<ViewAllocationDTO> GetSeatAllocatedView()
         {
             var item = _repositaryViewSeatAllocation.GetAll()

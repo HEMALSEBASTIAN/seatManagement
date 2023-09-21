@@ -7,8 +7,10 @@ namespace SeatManagement.Interface
     {
         public List<Cabin> Get();
         public void AddCabin(List<CabinDTO> cabinDTOList);
-        public Cabin Allocate(AllocateDTO cabin);
-        public Cabin Deallocate(AllocateDTO cabin);
         public Cabin GetById(int id);
+        public void AllocateCabin(int cabinId, int employeeId);
+        public void DeallocateCabin(int cabinId);
+        //public Cabin Allocate(AllocateDTO cabin);
+        //public Cabin Deallocate(AllocateDTO cabin);
     }
 }

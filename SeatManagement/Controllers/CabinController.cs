@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
@@ -26,34 +27,40 @@ namespace SeatManagement.Controllers
             _repositary.AddCabin(cabinDTOList);
             return Ok();
         }
-        [HttpPatch] //Alocating and deallocating cabin
-        public IActionResult Allocation([FromQuery] string action, AllocateDTO cabin)
+        [HttpPatch("{cabinId}")] //For Allocating and deallocating cabin
+        public IActionResult Allocate(int cabinId, int? employeeId)
         {
-            Cabin item;
-            if(String.Equals(action, "allocate", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                item = _repositary.Allocate(cabin);
-                if (item == null)
-                    return NotFound("Content not found");
-                return Ok("Cabin Allocation successfull");
+                if (employeeId.HasValue)
+                {
+                    _repositary.AllocateCabin(cabinId, employeeId.Value);
+                }
+                else
+                {
+                    _repositary.DeallocateCabin(cabinId);
+                }
+                return Ok();
             }
-            else if(String.Equals(action, "deallocate", StringComparison.OrdinalIgnoreCase))
+            catch (NoDataException ex)
             {
-                item = _repositary.Deallocate(cabin);
-                if (item == null)
-                    return NotFound("Content not found");
-                return Ok("Cabin Unallocation successfull");
+                return NotFound(ex.Message);
             }
-            else
-                return BadRequest("Invalid action parameter");
+            catch (EmployeeAlreadyAllocatedException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (AllocationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
-
-
-
-
-
-        [Route("id")] //get cab by id
-        [HttpGet]
+        [HttpGet("{id}")] //get cab by id
         public IActionResult Get(int id)
         {
             var item = _repositary.GetById(id);
@@ -79,6 +86,27 @@ namespace SeatManagement.Controllers
         //    if (item == null)
         //        return NotFound();
         //    return Ok();
+        //}
+        //[HttpPatch] //Alocating and deallocating cabin
+        //public IActionResult Allocation([FromQuery] string action, AllocateDTO cabin)
+        //{
+        //    Cabin item;
+        //    if (String.Equals(action, "allocate", StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        item = _repositary.Allocate(cabin);
+        //        if (item == null)
+        //            return NotFound("Content not found");
+        //        return Ok("Cabin Allocation successfull");
+        //    }
+        //    else if (String.Equals(action, "deallocate", StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        item = _repositary.Deallocate(cabin);
+        //        if (item == null)
+        //            return NotFound("Content not found");
+        //        return Ok("Cabin Unallocation successfull");
+        //    }
+        //    else
+        //        return BadRequest("Invalid action parameter");
         //}
     }
 }

@@ -17,7 +17,7 @@ namespace SeatManagementConsole.View
         public void DoWork()
         {
             IEntityManager<ViewAllocationDTO> ViewAllocationManager = new EntityManager<ViewAllocationDTO>("api/Report?type=seat&&action=ViewAllocatedSeat");
-            IEntityManager<AllocateDTO> SeatAllocationManager = new EntityManager<AllocateDTO>("api/seat?action=deallocate");
+            IAllocationManager<Seat> SeatAllocationManager = new AllocationManager<Seat>("api/seat");
 
             Console.WriteLine("-----------------Seat Allocation System-----------------");
             Console.WriteLine("Showing All Allocated Seats");
@@ -27,24 +27,19 @@ namespace SeatManagementConsole.View
             {
                 Console.WriteLine($"{item.SeatId}    {item.CityAbbrevation}-{item.BuildingAbbrevation}-{item.FacilityFloor}-{item.FacilityName}-{item.SeatNo}   {item.EmployeeName}");
             }
-            while(true)
-            {
-                Console.Write("Enter the seat id you want to deallocate: ");
-                int SeatId = Convert.ToInt32(Console.ReadLine());
-                if (AllocatedSeatList.Any(x => x.SeatId == SeatId))
-                {
-                    var AllocatedSeat=AllocatedSeatList.Where(x=>x.SeatId==SeatId).FirstOrDefault();
-                    Console.WriteLine($"{AllocatedSeat.EmployeeName} has been deallocated from seat no: {AllocatedSeat.SeatNo}");
+            Console.Write("Enter the seat id you want to deallocate: ");
+            int SeatId = Convert.ToInt32(Console.ReadLine());
 
-                    AllocateDTO seatAllocateDTO = new AllocateDTO()
-                    {
-                        SeatId = SeatId,
-                        EmployeeId =AllocatedSeat.EmployeeId,
-                    };
-                    SeatAllocationManager.Update(seatAllocateDTO);
-                    break;
-                }
-            }
+            int response=SeatAllocationManager.Deallocate(SeatId);
+            if (response == 0)
+            {
+                var AllocatedSeat = AllocatedSeatList.Where(x => x.SeatId == SeatId).FirstOrDefault();
+                Console.WriteLine($"{AllocatedSeat.EmployeeName} has been deallocated from seat no: {AllocatedSeat.SeatNo}");
+                Console.WriteLine("Seat deallocation successfull");
+            }            
+            else
+                Console.WriteLine("Seat deallocation unsuccessfull");
+                  
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
         }

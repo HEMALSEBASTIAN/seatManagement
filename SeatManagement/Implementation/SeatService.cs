@@ -17,23 +17,18 @@ namespace SeatManagement.Implementation
         }
         public List<Seat> Get()
         {
-            var item = _seatRepositary.GetAll();
-            
-            return item
-                .Skip(10)
-                .Take(10)
-                .ToList();
+            return _seatRepositary.GetAll().ToList();
         }
-        public void AddSeat(SeatDTO seatDTO)
-        {
-            var seat = new Seat()
-            {
-                SeatNo = seatDTO.SeatNo,
-                FacilityId = seatDTO.FacilityId,
-                EmployeeId=null
-            };
-            _seatRepositary.Add(seat);
-        }
+        //public void AddSeat(SeatDTO seatDTO)
+        //{
+        //    var seat = new Seat()
+        //    {
+        //        SeatNo = seatDTO.SeatNo,
+        //        FacilityId = seatDTO.FacilityId,
+        //        EmployeeId=null
+        //    };
+        //    _seatRepositary.Add(seat);
+        //}
 
         public void AddSeat(List<SeatDTO> seatDTOList)
         {
@@ -50,47 +45,83 @@ namespace SeatManagement.Implementation
             _seatRepositary.Add(seatList);
         }
 
-        public Seat AllocateSeat(AllocateDTO seat)
+        //public Seat AllocateSeat(AllocateDTO seat)
+        //{
+        //    var item = _seatRepositary.GetById(seat.SeatId);
+        //    var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
+
+        //    if (item == null)  
+        //        throw new NoDataException("Seat does not exist");
+        //    else if(employee == null)
+        //            throw new NoDataException("Employee does not exist");
+        //    else if (employee.IsAllocated == true)
+        //        throw new EmployeeAlreadyAllocatedException("Employee already allocated");
+        //    else if(item.EmployeeId!=null)
+        //        throw new AllocationException("Seat already allocated");
+
+        //    item.EmployeeId = seat.EmployeeId;
+        //    employee.IsAllocated = true;
+        //    _employeeRepositary.Update();
+        //    _seatRepositary.Update();
+        //    return item;
+        //}
+
+        public void AllocateSeat(int seatId, int employeeId) 
         {
-            var item = _seatRepositary.GetById(seat.SeatId);
-            var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
+            var seat = _seatRepositary.GetById(seatId);
+            var employee = _employeeRepositary.GetById(employeeId);
 
-            if (item == null)  
-                throw new NoDataException("Seat does not exist");
-            else if(employee == null)
-                    throw new NoDataException("Employee does not exist");
-            else if (employee.IsAllocated == true)
-                throw new EmployeeAlreadyAllocatedException("Employee already allocated");
-            else if(item.EmployeeId!=null)
-                throw new AllocationException("Seat already allocated");
-
-            item.EmployeeId = seat.EmployeeId;
-            employee.IsAllocated = true;
-            _employeeRepositary.Update();
-            _seatRepositary.Update();
-            return item;
-        }
-
-        public Seat DeAllocateSeat(AllocateDTO seat)
-        {
-            var item = _seatRepositary.GetById(seat.SeatId);
-            var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
-
-            if (item == null)
+            if (seat == null)
                 throw new NoDataException("Seat does not exist");
             else if (employee == null)
                 throw new NoDataException("Employee does not exist");
-            else if (employee.IsAllocated == false)
-                throw new EmployeeAlreadyAllocatedException("Employee is not yet allocated!");
-            else if (item.EmployeeId == null)
-                throw new AllocationException("Seat is not yet allocated!"); 
+            if (employee.IsAllocated == true)
+                throw new EmployeeAlreadyAllocatedException("Employee already allocated");
+            else if (seat.EmployeeId != null)
+                throw new AllocationException("Seat already allocated");
 
-
-            item.EmployeeId = null;
-            employee.IsAllocated = false;
-            _employeeRepositary.Update();
+            seat.EmployeeId = employeeId;
+            employee.IsAllocated = true;
             _seatRepositary.Update();
-            return item;
+            _employeeRepositary.Update();
+        }
+
+        //public Seat DeAllocateSeat(AllocateDTO seat)
+        //{
+        //    var item = _seatRepositary.GetById(seat.SeatId);
+        //    var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
+
+        //    if (item == null)
+        //        throw new NoDataException("Seat does not exist");
+        //    else if (employee == null)
+        //        throw new NoDataException("Employee does not exist");
+        //    else if (employee.IsAllocated == false)
+        //        throw new EmployeeAlreadyAllocatedException("Employee is not yet allocated!");
+        //    else if (item.EmployeeId == null)
+        //        throw new AllocationException("Seat is not yet allocated!"); 
+
+
+        //    item.EmployeeId = null;
+        //    employee.IsAllocated = false;
+        //    _employeeRepositary.Update();
+        //    _seatRepositary.Update();
+        //    return item;
+        //}
+
+        public void DeAllocateSeat(int seatId)
+        {
+            var seat = _seatRepositary.GetById(seatId);
+
+            if (seat == null)
+                throw new NoDataException("Seat does not exist");
+            else if (seat.EmployeeId == null)
+                throw new AllocationException("Seat is not yet allocated!");
+
+            var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
+            seat.EmployeeId = null;
+            employee.IsAllocated = false;
+            _seatRepositary.Update();
+            _employeeRepositary.Update();
         }
 
         public Seat GetById(int id)

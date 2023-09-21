@@ -1,4 +1,5 @@
-﻿using SeatManagement.DTO;
+﻿using Microsoft.EntityFrameworkCore;
+using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
 
@@ -27,9 +28,22 @@ namespace SeatManagement.Implementation
             _repositary.Add(meetingRoomList);
         }
 
-        public List<MeetingRoom> GetAll()
+        public List<ViewAllocationDTO> GetAll()
         {
-            return _repositary.GetAll().ToList();
+            return _repositary.GetAll()
+                .Include(x => x.Facility)
+                .Include(x => x.Facility.LookUpBuilding)
+                .Include(x => x.Facility.LookUpCity)
+                .Select(x => new ViewAllocationDTO
+                {
+                    SeatId = x.MeetingRoomId,
+                    SeatNo = x.MeetingRoomNo,
+                    TotalSeat = x.TotalSeat,
+                    FacilityName = x.Facility.FacilityName,
+                    FacilityFloor = x.Facility.FacilityFloor,
+                    BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
+                    CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
+                }).ToList();
         }
         public MeetingRoom GetById(int id)
         {

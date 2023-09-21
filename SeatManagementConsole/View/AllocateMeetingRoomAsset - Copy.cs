@@ -19,26 +19,8 @@ namespace SeatManagementConsole.View
         {
             Console.Clear();
 
-            //IEntityManager<MeetingRoomAsset> MeetingRoomAssetManager1 = new EntityManager<MeetingRoomAsset>("api/MeetingRoomAsset");
 
-
-            //var updateAllocation1 = new MeetingRoomAsset()
-            //{
-            //    AssetQuantity = 6,
-            //    AssetId = 2,
-            //    MeetingRoomId = 5,
-            //    MeetingRoomAssetId = 1
-
-            //};
-            //MeetingRoomAssetManager1.Update(updateAllocation1);
-
-
-
-
-
-
-
-            IEntityManager<ViewAllocationDTO> ViewMeetingRoomManager = new EntityManager<ViewAllocationDTO>("api/Report/GetMeetingRoomView");
+            IEntityManager<ViewAllocationDTO> ViewMeetingRoomManager = new EntityManager<ViewAllocationDTO>("api/MeetingRoom");
 
             Console.WriteLine("Available Meeting room");
             var MeetingRoomList = ViewMeetingRoomManager.Get();

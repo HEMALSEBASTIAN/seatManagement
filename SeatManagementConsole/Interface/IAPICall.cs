@@ -14,5 +14,6 @@ namespace SeatManagementConsole.Interface
         public int Add(T item);
         public void BulkAdd(List<T> items);
         public void Update(T item);
+        public int Update();
     }
 }
