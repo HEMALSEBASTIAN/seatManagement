@@ -29,7 +29,7 @@ namespace SeatManagementConsole.Implementation
             var json = JsonConvert.SerializeObject(item);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = _client.PostAsync(_endPoint, content).Result;
-            if (response.IsSuccessStatusCode)
+            if (response.StatusCode==HttpStatusCode.OK)
             {
                 var responseContent = response.Content.ReadAsStringAsync().Result;
                 if (int.TryParse(responseContent, out int result))
@@ -38,6 +38,11 @@ namespace SeatManagementConsole.Implementation
                 }
                 else
                     Console.WriteLine($"Response content : {responseContent}");
+            }
+            else if(response.StatusCode==HttpStatusCode.BadRequest)
+            {
+                var responseContent = response.Content.ReadAsStringAsync().Result;
+                Console.WriteLine($"Response content : {responseContent}");
             }
             return 0;
         }
@@ -70,7 +75,6 @@ namespace SeatManagementConsole.Implementation
             else if(response.StatusCode==HttpStatusCode.NoContent)
             {
                 var responseContent = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine($"Response content : {responseContent}");
                 return new List<T>();
             }
             else if(response.StatusCode==HttpStatusCode.BadRequest)

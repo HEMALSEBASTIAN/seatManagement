@@ -16,8 +16,8 @@ public class Program
     public static void Main(string[] args)
     {
 
-        IAPICall<Seat> seatManager = new APICall<Seat>("api/seat/pagination?pagenumber=1&&pageSize=10");
-        List<Seat> seatList=seatManager.GetAll();
+        //IAPICall<Seat> seatManager = new APICall<Seat>("api/seat/pagination?pagenumber=1&&pageSize=10");
+        //List<Seat> seatList=seatManager.GetAll();
 
 
 

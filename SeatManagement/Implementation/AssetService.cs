@@ -1,4 +1,5 @@
-﻿using SeatManagement.DTO;
+﻿using SeatManagement.CustomException;
+using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
 
@@ -42,7 +43,7 @@ namespace SeatManagement.Implementation
                     {
                         AssetName = asset.AssetName,
                     });
-                }
+                };
             }
             _repositary.Add(newAssetList);
         }

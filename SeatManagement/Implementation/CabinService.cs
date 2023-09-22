@@ -1,4 +1,5 @@
-﻿using SeatManagement.CustomException;
+﻿using Microsoft.EntityFrameworkCore;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
@@ -108,6 +109,73 @@ namespace SeatManagement.Implementation
             var item = _repositaryCabin.GetById(id);
             if (item == null)
                 return null;
+            return item;
+        }
+
+
+        public List<ViewAllocationDTO> GetCabinUnAllocatedView()
+        {
+            var item = _repositaryCabin.GetAll()
+                .Include(x => x.Facility)
+                .Include(x => x.Facility.LookUpBuilding)
+                .Include(x => x.Facility.LookUpCity)
+                .Include(x => x.Employee)
+                .Where(x => x.EmployeeId == null)
+                .Select(x => new ViewAllocationDTO
+                {
+                    FacilityName = x.Facility.FacilityName,
+                    FacilityFloor = x.Facility.FacilityFloor,
+                    SeatId = x.CabinId,
+                    SeatNo = x.CabinNo,
+                    BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
+                    CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
+                }).ToList();
+            if (item.Count() == 0)
+                throw new NoDataException("No Unallocated cabins|");
+            return item;
+        }
+
+        public List<ViewAllocationDTO> GetCabinUnAllocatedViewByFacility(int facilityId)
+        {
+            var item = _repositaryCabin.GetAll()
+                .Include(x => x.Facility)
+                .Include(x => x.Facility.LookUpBuilding)
+                .Include(x => x.Facility.LookUpCity)
+                .Include(x => x.Employee)
+                .Where(x => x.EmployeeId == null && x.FacilityId == facilityId)
+                .Select(x => new ViewAllocationDTO
+                {
+                    FacilityName = x.Facility.FacilityName,
+                    FacilityFloor = x.Facility.FacilityFloor,
+                    SeatId = x.CabinId,
+                    SeatNo = x.CabinNo,
+                    BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
+                    CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
+                }).ToList();
+            if (item.Count() == 0)
+                throw new NoDataException("No Unallocated cabins!");
+            return item;
+        }
+
+        public List<ViewAllocationDTO> GetCabinUnAllocatedViewByFloor(int floorNo)
+        {
+            var item = _repositaryCabin.GetAll()
+                .Include(x => x.Facility)
+                .Include(x => x.Facility.LookUpBuilding)
+                .Include(x => x.Facility.LookUpCity)
+                .Include(x => x.Employee)
+                .Where(x => x.EmployeeId == null && x.Facility.FacilityFloor == floorNo)
+                .Select(x => new ViewAllocationDTO
+                {
+                    FacilityName = x.Facility.FacilityName,
+                    FacilityFloor = x.Facility.FacilityFloor,
+                    SeatId = x.CabinId,
+                    SeatNo = x.CabinNo,
+                    BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
+                    CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
+                }).ToList();
+            if (item.Count() == 0)
+                throw new NoDataException("No Unallocated cabins!");
             return item;
         }
     }

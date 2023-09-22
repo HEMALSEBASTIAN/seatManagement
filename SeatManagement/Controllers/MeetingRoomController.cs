@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
@@ -15,7 +16,7 @@ namespace SeatManagement.Controllers
         {
             _repositary = repositary;
         }
-        [HttpGet]  //Get all meeting room details
+        [HttpGet]  //Get all meeting room details with city and building name
         public IActionResult Get()
         {
             return Ok(_repositary.GetAll());
@@ -27,6 +28,27 @@ namespace SeatManagement.Controllers
             _repositary.Add(meetingRoomDTOList);
             return Ok();
         }
+
+        [HttpPost("{MeetingRoomId}")]
+        public IActionResult AllocateAsset(int MeetingRoomId, MeetingRoomAsset newAsset)
+        {
+            try
+            {
+                _repositary.AllocateAsset(MeetingRoomId, newAsset);
+                return Ok();
+            }
+            catch(ForeignKeyViolationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
+
+
+
+
 
         [Route("id")]
         [HttpGet]  //Get meeting room by details

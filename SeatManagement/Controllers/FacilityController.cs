@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
@@ -23,9 +24,16 @@ namespace SeatManagement.Controllers
         [HttpPost] //Add facility
         public IActionResult Post(FacilityDTO facilityDTO)
         {
+            try
+            {
+                int FacilityId = _repositary.Add(facilityDTO);
+                return Ok(FacilityId);
+            }
+            catch(ForeignKeyViolationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             
-            int FacilityId=_repositary.Add(facilityDTO);
-            return Ok(FacilityId);
         }
 
 

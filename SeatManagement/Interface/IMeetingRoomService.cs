@@ -9,5 +9,6 @@ namespace SeatManagement.Interface
         public MeetingRoom GetById(int id);
         public MeetingRoom Update(MeetingRoom meetingRoom);
         public List<MeetingRoom> GetMeetingRoomByFacility(int  facilityId);
+        public void AllocateAsset(int MeetingRoomId, MeetingRoomAsset newAsset);
     }
 }

@@ -20,12 +20,17 @@ namespace SeatManagement.Controllers
         {
             return Ok(_repositary.GetAll());
         }
+
+
+
         [HttpPost]  //allocate a asset to meeting room
         public IActionResult Post(MeetingRoomAssetDTO meetingRoomAssetDTO)
         {
             _repositary.Add(meetingRoomAssetDTO);
             return Ok();
         }
+
+
         
         [Route("id")] //Get meeting room asset details of a meeting room
         [HttpGet]
@@ -49,6 +54,8 @@ namespace SeatManagement.Controllers
                 return NotFound();
             return Ok();
         }
+
+
 
 
         [HttpGet("MeetingRoomId")] //get asset name from meetingRoomAsset bu linking asset, room and assetroom

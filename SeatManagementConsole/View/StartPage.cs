@@ -40,7 +40,6 @@ namespace SeatManagementConsole.View
                     "13.Allocate cabin\n" +
                     "14.Deallocate cabin\n" +
                     "15.Allocate meeting room asset\n" +
-                    "16.Deallocate meeting room asset\n" +
                     "Enter your choice : ");
                 int choice = Convert.ToInt32(Console.ReadLine());
                 Console.Clear();

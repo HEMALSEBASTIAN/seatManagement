@@ -49,76 +49,76 @@ namespace SeatManagement.Controllers
         //}
 
 
-        [HttpGet()] //return allocated and unallocated seat and cabin report from all facilities or particular faciltiy
-        public IActionResult AllocationReport([FromQuery] string type, [FromQuery] string action, [FromQuery] int?  facilityId)
-        {
-            try
-            {
+        //[HttpGet()] //return allocated and unallocated seat and cabin report from all facilities or particular faciltiy
+        //public IActionResult AllocationReport([FromQuery] string type, [FromQuery] string action, [FromQuery] int?  facilityId)
+        //{
+        //    try
+        //    {
                 
-                if (string.Equals(type, "seat", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (string.Equals(action, "ViewUnAllocatedSeat", StringComparison.OrdinalIgnoreCase))
-                    {
+        //        if (string.Equals(type, "seat", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            if (string.Equals(action, "ViewUnAllocatedSeat", StringComparison.OrdinalIgnoreCase))
+        //            {
                         
-                        if (facilityId.HasValue)
-                        {
-                            if (!_memoryCache.TryGetValue(key, out List<ViewAllocationDTO> list))
-                            {
-                                list = _repositary.GetSeatUnAllocatdView(facilityId.Value);
-                                var options = new MemoryCacheEntryOptions
-                                {
-                                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(600),
-                                };
-                                Console.WriteLine("not cached");
-                                _memoryCache.Set(key,list, options);
-                            }
-                            Console.WriteLine("Cached");
-                            return Ok(list);
-                        }
-                            //return Ok(_repositary.GetSeatUnAllocatdView(facilityId.Value));
-                        else
-                            return Ok(_repositary.GetSeatUnAllocatdView());
-                    }
-                    else if (string.Equals(action, "ViewAllocatedSeat", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (facilityId.HasValue)
-                            return Ok(_repositary.GetSeatAllocatedView(facilityId.Value));
-                        else
-                            return Ok(_repositary.GetSeatAllocatedView());
-                    }
-                    else
-                        return BadRequest("Invalid Action Parameter");
-                }
-                else if (string.Equals(type, "cabin", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (string.Equals(action, "ViewUnAllocatedCabin", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (facilityId.HasValue)
-                            return Ok(_repositary.GetCabinUnAllocatedView(facilityId.Value));
-                        else
-                            return Ok(_repositary.GetCabinUnAllocatedView());
-                    }
-                    else if (string.Equals(action, "ViewAllocatedCabin", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (facilityId.HasValue)
-                            return Ok(_repositary.GetCabinAllocatedView(facilityId.Value));
-                        else
-                            return Ok(_repositary.GetCabinAllocatedView());
-                    }
-                    else
-                        return BadRequest("Invaluid Action parameter");
-                }
-                else
-                {
-                    return BadRequest("Invalid Type Parameter");
-                }
+        //                if (facilityId.HasValue)
+        //                {
+        //                    if (!_memoryCache.TryGetValue(key, out List<ViewAllocationDTO> list))
+        //                    {
+        //                        list = _repositary.GetSeatUnAllocatdView(facilityId.Value);
+        //                        var options = new MemoryCacheEntryOptions
+        //                        {
+        //                            AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(600),
+        //                        };
+        //                        Console.WriteLine("not cached");
+        //                        _memoryCache.Set(key,list, options);
+        //                    }
+        //                    Console.WriteLine("Cached");
+        //                    return Ok(list);
+        //                }
+        //                    //return Ok(_repositary.GetSeatUnAllocatdView(facilityId.Value));
+        //                else
+        //                    return Ok(_repositary.GetSeatUnAllocatdView());
+        //            }
+        //            else if (string.Equals(action, "ViewAllocatedSeat", StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                if (facilityId.HasValue)
+        //                    return Ok(_repositary.GetSeatAllocatedView(facilityId.Value));
+        //                else
+        //                    return Ok(_repositary.GetSeatAllocatedView());
+        //            }
+        //            else
+        //                return BadRequest("Invalid Action Parameter");
+        //        }
+        //        else if (string.Equals(type, "cabin", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            if (string.Equals(action, "ViewUnAllocatedCabin", StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                if (facilityId.HasValue)
+        //                    return Ok(_repositary.GetCabinUnAllocatedView(facilityId.Value));
+        //                else
+        //                    return Ok(_repositary.GetCabinUnAllocatedView());
+        //            }
+        //            else if (string.Equals(action, "ViewAllocatedCabin", StringComparison.OrdinalIgnoreCase))
+        //            {
+        //                if (facilityId.HasValue)
+        //                    return Ok(_repositary.GetCabinAllocatedView(facilityId.Value));
+        //                else
+        //                    return Ok(_repositary.GetCabinAllocatedView());
+        //            }
+        //            else
+        //                return BadRequest("Invaluid Action parameter");
+        //        }
+        //        else
+        //        {
+        //            return BadRequest("Invalid Type Parameter");
+        //        }
 
-            }
-            catch(NoDataException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }
+        //    }
+        //    catch(NoDataException ex)
+        //    {
+        //        return NotFound(ex.Message);
+        //    }
+        //}
 
 
 
@@ -230,10 +230,10 @@ namespace SeatManagement.Controllers
 
 
 
-        [HttpGet("GetMeetingRoomView")]  //return meeting room details of all facilities
-        public IActionResult GetMeetingRoomView()
-        {
-            return Ok(_repositary.GetMeetingRoomView());
-        }
+        //[HttpGet("GetMeetingRoomView")]  //return meeting room details of all facilities
+        //public IActionResult GetMeetingRoomView()
+        //{
+        //    return Ok(_repositary.GetMeetingRoomView());
+        //}
     }
 }

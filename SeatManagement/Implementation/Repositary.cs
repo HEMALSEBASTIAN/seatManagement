@@ -15,17 +15,8 @@ namespace SeatManagement.Implementation
         }
         public void Add(T item)
         { 
-            try
-            {
-                _DbSet.Add(item);
-                _context.SaveChanges();
-            }
-            catch (DbUpdateException)
-            {
-                _context.Entry(item).State = EntityState.Detached;
-                Console.WriteLine("Exception is thrown");
-                Console.WriteLine();
-            }
+            _DbSet.Add(item);
+            _context.SaveChanges();
         }
         public void Add(List<T> items)
         { 

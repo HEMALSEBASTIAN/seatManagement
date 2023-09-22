@@ -1,4 +1,5 @@
-﻿using SeatManagement.DTO;
+﻿using SeatManagement.CustomException;
+using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
 

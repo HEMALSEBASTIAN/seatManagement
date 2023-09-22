@@ -1,17 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
+using System.Linq;
 
 namespace SeatManagement.Implementation
 {
     public class MeetingRoomService : IMeetingRoomService
     {
         private readonly IRepositary<MeetingRoom> _repositary;
-
-        public MeetingRoomService(IRepositary<MeetingRoom> repositary)
+        private readonly IRepositary<MeetingRoomAsset> _repositaryAsset;
+        public MeetingRoomService(IRepositary<MeetingRoom> repositary, IRepositary<MeetingRoomAsset> repositaryAsset)
         {
-            _repositary=repositary;
+            _repositary = repositary;
+            _repositaryAsset = repositaryAsset;
         }
         public void Add(List<MeetingRoomDTO> meetingRoomDTOList)
         {
@@ -26,6 +29,16 @@ namespace SeatManagement.Implementation
                 });
             }
             _repositary.Add(meetingRoomList);
+        }
+
+        public void AllocateAsset(int MeetingRoomId, MeetingRoomAsset newAsset)
+        {
+            var assetList = _repositaryAsset.GetAll().Select(x=>x.AssetId);
+            if (assetList.Contains(newAsset.AssetId))
+                _repositaryAsset.Add(newAsset);
+            else
+                throw new ForeignKeyViolationException("Asset id not in the list");
+            
         }
 
         public List<ViewAllocationDTO> GetAll()

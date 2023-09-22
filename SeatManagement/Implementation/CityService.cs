@@ -2,6 +2,7 @@
 using SeatManagement.Interface;
 using SeatManagement.Models;
 using Microsoft.AspNetCore.Mvc;
+using SeatManagement.CustomException;
 
 namespace SeatManagement.Implementation
 {
@@ -29,22 +30,22 @@ namespace SeatManagement.Implementation
             return _repositary.GetAll().ToList();
         }
 
-        public LookUpCity GetById(int id)
-        {
-            var item = _repositary.GetById(id);
-            return item;
-        }
-        public LookUpCity Update(int id, LookUpCityDTO City)
-        {
-            var item = _repositary.GetById(id);
-            if (item == null)
-            {
-                return null;
-            }
-            item.CityName = City.CityName;
-            item.CityAbbrevation = City.CityAbbrevation;
-            _repositary.Update();
-            return item;
-        }
+        //public LookUpCity GetById(int id)
+        //{
+        //    var item = _repositary.GetById(id);
+        //    return item;
+        //}
+        //public LookUpCity Update(int id, LookUpCityDTO City)
+        //{
+        //    var item = _repositary.GetById(id);
+        //    if (item == null)
+        //    {
+        //        return null;
+        //    }
+        //    item.CityName = City.CityName;
+        //    item.CityAbbrevation = City.CityAbbrevation;
+        //    _repositary.Update();
+        //    return item;
+        //}
     }
 }

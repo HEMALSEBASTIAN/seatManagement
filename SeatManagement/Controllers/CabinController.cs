@@ -69,44 +69,63 @@ namespace SeatManagement.Controllers
             return Ok(item);
         }
 
-        //[Route("allocate")]
-        //[HttpPatch]
-        //public IActionResult Allocate(AllocateDTO cabin)
-        //{
-        //    var item=_repositary.Allocate(cabin);
-        //    if(item==null)
-        //        return NotFound();
-        //    return Ok();
-        //}
-        //[Route("deallocate")]
-        //[HttpPatch]
-        //public IActionResult DeAllocate(AllocateDTO cabin)
-        //{
-        //    var item = _repositary.Deallocate(cabin);
-        //    if (item == null)
-        //        return NotFound();
-        //    return Ok();
-        //}
-        //[HttpPatch] //Alocating and deallocating cabin
-        //public IActionResult Allocation([FromQuery] string action, AllocateDTO cabin)
-        //{
-        //    Cabin item;
-        //    if (String.Equals(action, "allocate", StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        item = _repositary.Allocate(cabin);
-        //        if (item == null)
-        //            return NotFound("Content not found");
-        //        return Ok("Cabin Allocation successfull");
-        //    }
-        //    else if (String.Equals(action, "deallocate", StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        item = _repositary.Deallocate(cabin);
-        //        if (item == null)
-        //            return NotFound("Content not found");
-        //        return Ok("Cabin Unallocation successfull");
-        //    }
-        //    else
-        //        return BadRequest("Invalid action parameter");
-        //}
+        [HttpGet("report")]
+        public IActionResult Report(int? facilityId, int? floorNo)
+        {
+            try
+            {
+                if (facilityId.HasValue)
+                    return Ok(_repositary.GetCabinUnAllocatedViewByFacility(facilityId.Value));
+                else if(floorNo.HasValue)
+                    return Ok(_repositary.GetCabinUnAllocatedViewByFloor(floorNo.Value));
+                else
+                    return Ok(_repositary.GetCabinUnAllocatedView());
+            }
+            catch(NoDataException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }
+
+
+//[Route("allocate")]
+//[HttpPatch]
+//public IActionResult Allocate(AllocateDTO cabin)
+//{
+//    var item=_repositary.Allocate(cabin);
+//    if(item==null)
+//        return NotFound();
+//    return Ok();
+//}
+//[Route("deallocate")]
+//[HttpPatch]
+//public IActionResult DeAllocate(AllocateDTO cabin)
+//{
+//    var item = _repositary.Deallocate(cabin);
+//    if (item == null)
+//        return NotFound();
+//    return Ok();
+//}
+//[HttpPatch] //Alocating and deallocating cabin
+//public IActionResult Allocation([FromQuery] string action, AllocateDTO cabin)
+//{
+//    Cabin item;
+//    if (String.Equals(action, "allocate", StringComparison.OrdinalIgnoreCase))
+//    {
+//        item = _repositary.Allocate(cabin);
+//        if (item == null)
+//            return NotFound("Content not found");
+//        return Ok("Cabin Allocation successfull");
+//    }
+//    else if (String.Equals(action, "deallocate", StringComparison.OrdinalIgnoreCase))
+//    {
+//        item = _repositary.Deallocate(cabin);
+//        if (item == null)
+//            return NotFound("Content not found");
+//        return Ok("Cabin Unallocation successfull");
+//    }
+//    else
+//        return BadRequest("Invalid action parameter");
+//}

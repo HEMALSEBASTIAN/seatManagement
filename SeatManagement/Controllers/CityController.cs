@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
@@ -28,7 +29,7 @@ namespace SeatManagement.Controllers
         }
         
         
-
+  
         
         //[HttpGet("{id}")] //get city details by id
         //public IActionResult Get(int id) 

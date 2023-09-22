@@ -29,6 +29,12 @@ namespace SeatManagementConsole.View
             if (choice == 1)
             {
                 var CityList = CityManager.Get();
+                if(CityList.Count == 0) 
+                {
+                    Console.WriteLine("Please add city first\nPress Enter to continue");
+                    Console.ReadLine();
+                    return;
+                }
                 Console.WriteLine("City Id   City Name");
                 foreach (var city in CityList)
                 {
@@ -61,6 +67,12 @@ namespace SeatManagementConsole.View
             if (choice == 1)
             {
                 var BuildingList = BuildingManager.Get();
+                if (BuildingList.Count == 0)
+                {
+                    Console.WriteLine("Please add builidng first\nPress Enter to continue");
+                    Console.ReadLine();
+                    return;
+                }
                 Console.WriteLine("Builing Id   Building Name");
                 foreach (var building in BuildingList)
                 {

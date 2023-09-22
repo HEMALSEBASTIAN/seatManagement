@@ -8,7 +8,7 @@ namespace SeatManagementConsole.Interface
 {
     public interface IAPICall<T> where T : class
     {
-        public List<T> GetAll();
+        public List<T>? GetAll();
         public T? GetById(int id);
         //public void Add(T item);
         public int Add(T item);

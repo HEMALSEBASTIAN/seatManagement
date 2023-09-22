@@ -1,4 +1,5 @@
-﻿using SeatManagement.CustomException;
+﻿using Microsoft.EntityFrameworkCore;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
@@ -19,16 +20,7 @@ namespace SeatManagement.Implementation
         {
             return _seatRepositary.GetAll().ToList();
         }
-        //public void AddSeat(SeatDTO seatDTO)
-        //{
-        //    var seat = new Seat()
-        //    {
-        //        SeatNo = seatDTO.SeatNo,
-        //        FacilityId = seatDTO.FacilityId,
-        //        EmployeeId=null
-        //    };
-        //    _seatRepositary.Add(seat);
-        //}
+        
 
         public void AddSeat(List<SeatDTO> seatDTOList)
         {
@@ -45,26 +37,7 @@ namespace SeatManagement.Implementation
             _seatRepositary.Add(seatList);
         }
 
-        //public Seat AllocateSeat(AllocateDTO seat)
-        //{
-        //    var item = _seatRepositary.GetById(seat.SeatId);
-        //    var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
-
-        //    if (item == null)  
-        //        throw new NoDataException("Seat does not exist");
-        //    else if(employee == null)
-        //            throw new NoDataException("Employee does not exist");
-        //    else if (employee.IsAllocated == true)
-        //        throw new EmployeeAlreadyAllocatedException("Employee already allocated");
-        //    else if(item.EmployeeId!=null)
-        //        throw new AllocationException("Seat already allocated");
-
-        //    item.EmployeeId = seat.EmployeeId;
-        //    employee.IsAllocated = true;
-        //    _employeeRepositary.Update();
-        //    _seatRepositary.Update();
-        //    return item;
-        //}
+        
 
         public void AllocateSeat(int seatId, int employeeId) 
         {
@@ -86,27 +59,7 @@ namespace SeatManagement.Implementation
             _employeeRepositary.Update();
         }
 
-        //public Seat DeAllocateSeat(AllocateDTO seat)
-        //{
-        //    var item = _seatRepositary.GetById(seat.SeatId);
-        //    var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
-
-        //    if (item == null)
-        //        throw new NoDataException("Seat does not exist");
-        //    else if (employee == null)
-        //        throw new NoDataException("Employee does not exist");
-        //    else if (employee.IsAllocated == false)
-        //        throw new EmployeeAlreadyAllocatedException("Employee is not yet allocated!");
-        //    else if (item.EmployeeId == null)
-        //        throw new AllocationException("Seat is not yet allocated!"); 
-
-
-        //    item.EmployeeId = null;
-        //    employee.IsAllocated = false;
-        //    _employeeRepositary.Update();
-        //    _seatRepositary.Update();
-        //    return item;
-        //}
+        
 
         public void DeAllocateSeat(int seatId)
         {
@@ -129,6 +82,74 @@ namespace SeatManagement.Implementation
             return _seatRepositary.GetById(id);
         }
 
+        public List<ViewAllocationDTO> GetSeatUnAllocatdViewByFacility(int facilityId)
+        {
+            var item = _seatRepositary.GetAll()
+                .Include(x => x.Facility)
+                .Include(x => x.Facility.LookUpBuilding)
+                .Include(x => x.Facility.LookUpCity)
+                .Include(x => x.Employee)
+                .Where(x => x.EmployeeId == null && x.FacilityId == facilityId)
+                .Select(x => new ViewAllocationDTO
+                {
+                    FacilityName = x.Facility.FacilityName,
+                    FacilityFloor = x.Facility.FacilityFloor,
+                    SeatId = x.SeatId,
+                    SeatNo = x.SeatNo,
+                    BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
+                    CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
+                }).ToList();
+            if (item.Count() == 0)
+                throw new NoDataException("No UnAllocated seats");
+            return item;
+        }
+
+        public List<ViewAllocationDTO> GetSeatUnAllocatdView()
+        {
+            var item = _seatRepositary.GetAll()
+                .Include(x => x.Facility)
+                .Include(x => x.Facility.LookUpBuilding)
+                .Include(x => x.Facility.LookUpCity)
+                .Include(x => x.Employee)
+                .Where(x => x.EmployeeId == null)
+                .Select(x => new ViewAllocationDTO
+                {
+                    FacilityName = x.Facility.FacilityName,
+                    FacilityFloor = x.Facility.FacilityFloor,
+                    SeatId = x.SeatId,
+                    SeatNo = x.SeatNo,
+                    BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
+                    CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
+                }).ToList();
+            if (item.Count() == 0)
+                throw new NoDataException("No UnAllocated seats!");
+            return item;
+        }
+
+
+        public List<ViewAllocationDTO> GetSeatUnAllocatedViewByFloor(int floorNo)
+        {
+            var item = _seatRepositary.GetAll()
+                .Include(x => x.Facility)
+                .Include(x => x.Facility.LookUpBuilding)
+                .Include(x => x.Facility.LookUpCity)
+                .Include(x => x.Employee)
+                .Where(x => x.EmployeeId == null && x.Facility.FacilityFloor == floorNo)
+                .Select(x => new ViewAllocationDTO
+                {
+                    FacilityName = x.Facility.FacilityName,
+                    FacilityFloor = x.Facility.FacilityFloor,
+                    SeatId = x.SeatId,
+                    SeatNo = x.SeatNo,
+                    BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
+                    CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
+                }).ToList();
+            if (item.Count() == 0)
+                throw new NoDataException("No UnAllocated seats!");
+            return item;
+        }
+
+
         public List<Seat> Get(int pageNumber, int pageSize)
         {
             return _seatRepositary.GetAll()
@@ -138,3 +159,55 @@ namespace SeatManagement.Implementation
         }
     }
 }
+
+
+//public Seat AllocateSeat(AllocateDTO seat)
+//{
+//    var item = _seatRepositary.GetById(seat.SeatId);
+//    var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
+//    if (item == null)  
+//        throw new NoDataException("Seat does not exist");
+//    else if(employee == null)
+//            throw new NoDataException("Employee does not exist");
+//    else if (employee.IsAllocated == true)
+//        throw new EmployeeAlreadyAllocatedException("Employee already allocated");
+//    else if(item.EmployeeId!=null)
+//        throw new AllocationException("Seat already allocated");
+//    item.EmployeeId = seat.EmployeeId;
+//    employee.IsAllocated = true;
+//    _employeeRepositary.Update();
+//    _seatRepositary.Update();
+//    return item;
+//}
+
+
+//public Seat DeAllocateSeat(AllocateDTO seat)
+//{
+//    var item = _seatRepositary.GetById(seat.SeatId);
+//    var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
+//    if (item == null)
+//        throw new NoDataException("Seat does not exist");
+//    else if (employee == null)
+//        throw new NoDataException("Employee does not exist");
+//    else if (employee.IsAllocated == false)
+//        throw new EmployeeAlreadyAllocatedException("Employee is not yet allocated!");
+//    else if (item.EmployeeId == null)
+//        throw new AllocationException("Seat is not yet allocated!"); 
+//    item.EmployeeId = null;
+//    employee.IsAllocated = false;
+//    _employeeRepositary.Update();
+//    _seatRepositary.Update();
+//    return item;
+//}
+
+
+//public void AddSeat(SeatDTO seatDTO)
+//{
+//    var seat = new Seat()
+//    {
+//        SeatNo = seatDTO.SeatNo,
+//        FacilityId = seatDTO.FacilityId,
+//        EmployeeId=null
+//    };
+//    _seatRepositary.Add(seat);
+//}

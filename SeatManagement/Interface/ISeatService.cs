@@ -11,8 +11,10 @@ namespace SeatManagement.Interface
         public void AllocateSeat(int seatId, int employeeId);
         public void DeAllocateSeat(int seatId);
         public Seat GetById(int id);
-        //public Seat DeAllocateSeat(AllocateDTO seat);
-        //public Seat AllocateSeat(AllocateDTO seat);
-        //public void AddSeat(SeatDTO seatDTO);
+        public List<ViewAllocationDTO> GetSeatUnAllocatdView();
+        public List<ViewAllocationDTO> GetSeatUnAllocatdViewByFacility(int facilityId);
+        public List<ViewAllocationDTO> GetSeatUnAllocatedViewByFloor(int floorNo);
+
+
     }
 }
