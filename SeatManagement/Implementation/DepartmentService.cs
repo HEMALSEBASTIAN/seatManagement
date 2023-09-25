@@ -1,4 +1,5 @@
-﻿using SeatManagement.DTO;
+﻿using SeatManagement.CustomException;
+using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
 
@@ -6,11 +7,11 @@ namespace SeatManagement.Implementation
 {
     public class DepartmentService : IDepartmentService
     {
-        private readonly IRepositary<Department> _repositary;
+        private readonly IRepository<Department> _repository;
 
-        public DepartmentService(IRepositary<Department> repositary)
+        public DepartmentService(IRepository<Department> repository)
         {
-            _repositary = repositary;
+            _repository = repository;
         }
         public int Add(DepartmentDTO departmentDTO)
         {
@@ -18,13 +19,16 @@ namespace SeatManagement.Implementation
             {
                 DepartmentName = departmentDTO.DepartmentName,
             };
-            _repositary.Add(department);
+            _repository.Add(department);
             return department.DepartmentId;
         }
 
-        public List<Department> Get()
+        public IQueryable<Department> Get()
         {
-            return _repositary.GetAll().ToList();
+            var departmentList= _repository.GetAll();
+            if (departmentList ==null || !departmentList.Any())
+                throw new NoDataException("No departments found\nPlease add departments first");
+            return departmentList;
         }
     }
 }

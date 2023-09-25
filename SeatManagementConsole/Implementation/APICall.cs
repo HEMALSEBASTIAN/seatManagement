@@ -29,21 +29,13 @@ namespace SeatManagementConsole.Implementation
             var json = JsonConvert.SerializeObject(item);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = _client.PostAsync(_endPoint, content).Result;
+            var responseContent = response.Content.ReadAsStringAsync().Result;
             if (response.StatusCode==HttpStatusCode.OK)
             {
-                var responseContent = response.Content.ReadAsStringAsync().Result;
                 if (int.TryParse(responseContent, out int result))
-                {
-                    return result; // Return the integer value from the API response
-                }
-                else
-                    Console.WriteLine($"Response content : {responseContent}");
+                    return result;
             }
-            else if(response.StatusCode==HttpStatusCode.BadRequest)
-            {
-                var responseContent = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine($"Response content : {responseContent}");
-            }
+            Console.WriteLine($"Response content : {responseContent}");
             return 0;
         }
 
@@ -52,60 +44,39 @@ namespace SeatManagementConsole.Implementation
             var json= JsonConvert.SerializeObject(items);
             var content = new StringContent(json, Encoding.UTF8 , "application/json");
             var response = _client.PostAsync(_endPoint, content).Result;
-            if(response.IsSuccessStatusCode)
-            {
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+            if(response.StatusCode==HttpStatusCode.OK)
                 Console.WriteLine("Bulk insertion successful.");
-            }
             else
             {
-                Console.WriteLine("Bulk insertion failed with status code: " + response.StatusCode);
+                Console.WriteLine("Bulk insertion failed: " + responseContent);
             }
-
+                
         }
 
         public List<T> GetAll()
         {
             var response = _client.GetAsync(_endPoint).Result;
+            string responseContent = response.Content.ReadAsStringAsync().Result;
             if(response.StatusCode==HttpStatusCode.OK)
             {
-                var responseContent = response.Content.ReadAsStringAsync().Result;
                 var getResponse = JsonConvert.DeserializeObject<List<T>>(responseContent);
                 return getResponse.ToList();
             }
-            else if(response.StatusCode==HttpStatusCode.NoContent)
-            {
-                var responseContent = response.Content.ReadAsStringAsync().Result;
-                return new List<T>();
-            }
-            else if(response.StatusCode==HttpStatusCode.BadRequest)
-            {
-                var responseContent = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine($"Response content : {responseContent}");
-                return new List<T>();
-            }
-            else if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                var responseContent = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine($"Response content : {responseContent}");
-                return new List<T>();
-            }
+            Console.WriteLine($"Response content : {responseContent}");
             return new List<T>();
         }
 
         public T? GetById(int id)
         {
             var response = _client.GetAsync(_endPoint + "/id?id="+id).Result;
-            if(response.StatusCode==HttpStatusCode.OK)
-            {
-                var responseContent=response.Content.ReadAsStringAsync().Result;
+            var responseContent = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode==HttpStatusCode.OK)
+            {   
                 var getResponse=JsonConvert.DeserializeObject<T>(responseContent);
                 return getResponse;
             }
-            else if(response.StatusCode==HttpStatusCode.NotFound)
-            {
-                var responseContent = response.Content.ReadAsStringAsync().Result;
-                Console.WriteLine($"Response Content: {responseContent}");
-            }
+            Console.WriteLine($"Response Content: {responseContent}");
             return default;
         }
 
@@ -123,17 +94,64 @@ namespace SeatManagementConsole.Implementation
         {
             var response = _client.PatchAsync(_endPoint, null).Result;
             var responseContent = response.Content.ReadAsStringAsync().Result;
-            if(response.StatusCode==HttpStatusCode.Conflict )
-            {
-                Console.WriteLine($"Response content : {responseContent}");
-                return -1;
-            }
-            else if(response.StatusCode==HttpStatusCode.NotFound ) 
-            {
-                Console.WriteLine($"Response content : {responseContent}");
-                return -1;
-            }
-            return 0;
+            if (response.StatusCode == HttpStatusCode.OK)
+                return 0;
+            Console.WriteLine($"Response content : {responseContent}");
+            return -1;
         }
     }
 }
+
+
+
+
+//else if(response.StatusCode==HttpStatusCode.NoContent)
+//{
+//    responseContent = response.Content.ReadAsStringAsync().Result;
+//    return new List<T>();
+//}
+//else if(response.StatusCode==HttpStatusCode.BadRequest)
+//{
+//    responseContent = response.Content.ReadAsStringAsync().Result;
+//    Console.WriteLine($"Response content : {responseContent}");
+//    return new List<T>();
+//}
+//else if (response.StatusCode == HttpStatusCode.NotFound)
+//{
+//    responseContent = response.Content.ReadAsStringAsync().Result;
+//    Console.WriteLine($"Response content : {responseContent}");
+//    return new List<T>();
+//}
+//else if(response.StatusCode == HttpStatusCode.InternalServerError)
+//{
+//    var responseContent -
+//}
+//return new List<T>();
+
+
+
+
+
+//else if(response.StatusCode==HttpStatusCode.NotFound)
+//{
+//    var responseContent = response.Content.ReadAsStringAsync().Result;
+
+//}
+//else if(response.StatusCode== HttpStatusCode.BadRequest)
+//{
+//    var responseContent = response.Content.ReadAsStringAsync().Result;
+//    Console.WriteLine($"Response Content: {responseContent}");
+//}
+
+
+
+//if (response.StatusCode==HttpStatusCode.Conflict )
+//{
+
+//}
+//else if(response.StatusCode==HttpStatusCode.NotFound ) 
+//{
+//    Console.WriteLine($"Response content : {responseContent}");
+//    return -1;
+//}
+//return 0;

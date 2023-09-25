@@ -7,7 +7,7 @@ namespace SeatManagement.Interface
     public interface ICityService
     {
         public int Add(LookUpCityDTO cityDTO);
-        public List<LookUpCity> Get();
+        public IQueryable<LookUpCity> Get();
         //public LookUpCity GetById(int id);
         //public LookUpCity Update(int id, LookUpCityDTO City);
     }

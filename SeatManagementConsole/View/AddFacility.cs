@@ -31,7 +31,7 @@ namespace SeatManagementConsole.View
                 var CityList = CityManager.Get();
                 if(CityList.Count == 0) 
                 {
-                    Console.WriteLine("Please add city first\nPress Enter to continue");
+                    Console.WriteLine("Press Enter to continue");
                     Console.ReadLine();
                     return;
                 }
@@ -55,6 +55,12 @@ namespace SeatManagementConsole.View
                     CityAbbrevation = CityAbbrevation,
                 };
                 CityId = CityManager.Add(NewCity);
+                if(CityId == 0)
+                {
+                    Console.WriteLine("Press Enter to continue");
+                    Console.ReadLine();
+                    return;
+                }
             }
             Console.WriteLine("Press Enter to continue");
             Console.ReadLine();
@@ -69,7 +75,7 @@ namespace SeatManagementConsole.View
                 var BuildingList = BuildingManager.Get();
                 if (BuildingList.Count == 0)
                 {
-                    Console.WriteLine("Please add builidng first\nPress Enter to continue");
+                    Console.WriteLine("Press Enter to continue");
                     Console.ReadLine();
                     return;
                 }
@@ -93,6 +99,12 @@ namespace SeatManagementConsole.View
                     BuildingAbbrevation = BuildingAbbrevation,
                 };
                 BuildingId = BuildingManager.Add(NewBuilding);
+                if(BuildingId == 0)
+                {
+                    Console.WriteLine("Press Enter to continue");
+                    Console.ReadLine();
+                    return;
+                }
             }
 
             Console.Write("Enter the facility name: ");

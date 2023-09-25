@@ -11,40 +11,29 @@ namespace SeatManagement.Controllers
     [ApiController]
     public class AssetController : Controller
     {
-        private readonly IAssetService _repositary;
+        private readonly IAssetService _assetService;
 
-        public AssetController(IAssetService repositary)
+        public AssetController(IAssetService assetService)
         {
-            _repositary=repositary;
+            this._assetService= assetService;
         }
         [HttpGet] //Get all asset
         public IActionResult Get()
         {
-            return Ok(_repositary.Get());
+            return Ok(_assetService.Get());
         }
-        [HttpPost] //Add asset in bulk or single
+        [HttpPost] //Add asset 
         public IActionResult AddAsset(List<LookUpAssetDTO> AssetDTOList)
         {
-            if(AssetDTOList.Count() == 1)
-            {
-               int AssetId= _repositary.Add(AssetDTOList[0]);
-                return Ok(AssetId);
-            }
-            else
-            {
-                _repositary.Add(AssetDTOList);
-                return Ok();
-            }
+            _assetService.Add(AssetDTOList);
+            return Ok();
         }
-        
-        
-        
-        
-        //[HttpPost("BulkAdd")]
-        //public IActionResult Post(List<LookUpAssetDTO> AssetDTOList)
-        //{
-        //    _repositary.Add(AssetDTOList);
-        //    return Ok();
-        //}
     }
 }
+
+//[HttpPost("BulkAdd")]
+//public IActionResult Post(List<LookUpAssetDTO> AssetDTOList)
+//{
+//    _repositary.Add(AssetDTOList);
+//    return Ok();
+//}

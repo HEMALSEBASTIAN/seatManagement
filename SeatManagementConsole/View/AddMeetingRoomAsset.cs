@@ -35,6 +35,9 @@ namespace SeatManagementConsole.View
             } while (choice == 1);
 
             AssetManager.BulkAdd(AssetList);
+
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
         }
     }
 }

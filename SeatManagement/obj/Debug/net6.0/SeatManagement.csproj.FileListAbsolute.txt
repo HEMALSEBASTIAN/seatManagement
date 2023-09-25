@@ -22,6 +22,7 @@ C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Micr
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Microsoft.OpenApi.dll
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
@@ -66,4 +67,3 @@ C:\Users\hemals\source\repos\SeatManagement\SeatManagement\obj\Debug\net6.0\refi
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\obj\Debug\net6.0\SeatManagement.pdb
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\obj\Debug\net6.0\SeatManagement.genruntimeconfig.cache
 C:\Users\hemals\source\repos\SeatManagement\SeatManagement\obj\Debug\net6.0\ref\SeatManagement.dll
-C:\Users\hemals\source\repos\SeatManagement\SeatManagement\bin\Debug\net6.0\Newtonsoft.Json.dll

@@ -18,7 +18,7 @@ namespace SeatManagementConsole.View
         {
             Console.Clear();
             IEntityManager<ViewFacilityDTO> ViewFacilityManager = new EntityManager<ViewFacilityDTO>("api/Facility");
-            IEntityManager<Cabin> cabinManager = new EntityManager<Cabin>("api/Cabin");
+            IEntityManager<CabinDTO> cabinManager = new EntityManager<CabinDTO>("api/Cabin");
 
             Console.WriteLine("Available Office Locations");
             var FacilityList = ViewFacilityManager.Get();
@@ -30,26 +30,16 @@ namespace SeatManagementConsole.View
             Console.Write("Enter the facility ID: ");
             int FacilityId = Convert.ToInt32(Console.ReadLine());
 
-            var CabinList = cabinManager.Get();
-            int PreviousCabinCount = CabinList.Where(x => x.FacilityId == FacilityId).Count();
-            Console.WriteLine(PreviousCabinCount);
-
             Console.Write("Enter the number of cabins : ");
             int AddtionalCabinCount = Convert.ToInt32(Console.ReadLine());
-            List<Cabin> NewCabinList = new List<Cabin>();
-            for (int i = 0; i < AddtionalCabinCount; i++)
+
+            var cabinDTO = new CabinDTO()
             {
-                NewCabinList.Add(new Cabin()
-                {
-                    CabinNo = string.Format("C{0:D3}", ++PreviousCabinCount),
-                    EmployeeId = null,
-                    FacilityId = FacilityId,
-                });
-            }
+                FacilityId = FacilityId,
+                Capacity = AddtionalCabinCount
+            };
 
-
-
-            cabinManager.BulkAdd(NewCabinList);
+            cabinManager.Add(cabinDTO);
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
         }

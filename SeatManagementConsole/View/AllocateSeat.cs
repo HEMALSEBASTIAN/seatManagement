@@ -19,7 +19,7 @@ namespace SeatManagementConsole.View
         public void DoWork()
         {
             Console.WriteLine("-----------------Seat Allocation System-----------------");
-            IEntityManager<ViewAllocationDTO> ViewAllocationManager = new EntityManager<ViewAllocationDTO>("api/Report?type=seat&&action=ViewUnAllocatedSeat");
+            IEntityManager<ViewAllocationDTO> ViewAllocationManager = new EntityManager<ViewAllocationDTO>("api/seat/report");
             IEntityManager <Employee> EmployeeManager = new EntityManager<Employee>("api/Employee");
             IAllocationManager<Seat> SeatManager = new AllocationManager<Seat>("api/Seat");
 

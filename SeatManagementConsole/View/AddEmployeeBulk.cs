@@ -33,7 +33,11 @@ namespace SeatManagementConsole.View
             var strategy = _EmployeeBulk.Where(x => x.AddType == choice).FirstOrDefault();
             employeeList=strategy?.Add();
 
-
+            if(employeeList==null)
+            {
+                Console.WriteLine("No employee to add");
+                return;
+            }
 
 
             IEntityManager<Employee> employeeManager = new EntityManager<Employee>("api/Employee");

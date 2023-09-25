@@ -33,24 +33,18 @@ namespace SeatManagementConsole.View
                 case 1:
                     Console.WriteLine("Available departments");
                     var departmentList = DepartmentManager.Get();
+                    if(!departmentList.Any())
+                    {
+                        Console.WriteLine("Press enter to continue");
+                        Console.ReadLine();
+                        return;
+                    }
                     foreach(var  department in departmentList)
                     {
                         Console.WriteLine($"{department.DepartmentId}  {department.DepartmentName}");
                     }
-                    while(true)
-                    {
-                        Console.Write("Enter the department Id: ");
-                        departmentId = Convert.ToInt32(Console.ReadLine());
-
-                        if (departmentList.Any(x => x.DepartmentId == departmentId))
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Enter correct department Id");
-                        }
-                    }
+                    Console.Write("Enter the department Id: ");
+                    departmentId = Convert.ToInt32(Console.ReadLine());
                     break;
                 case 2:
                     Console.Write("Enter the new department name: ");

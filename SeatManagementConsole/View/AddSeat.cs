@@ -18,38 +18,28 @@ namespace SeatManagementConsole.View
         {
             Console.Clear();
             IEntityManager<ViewFacilityDTO> ViewFacilityManager = new EntityManager<ViewFacilityDTO>("api/Facility");
-            IEntityManager<Seat> seatManager = new EntityManager<Seat>("api/Seat");
+            IEntityManager<SeatDTO> seatManager = new EntityManager<SeatDTO>("api/Seat");
 
             Console.WriteLine("Available Office Locations");
             var FacilityList = ViewFacilityManager.Get();
-            foreach(var facility in FacilityList)
+            foreach (var facility in FacilityList)
             {
                 Console.WriteLine($"{facility.FacilityId}  {facility.FacilityName}  " +
                     $"{facility.FacilityFloor}  {facility.BuildingName}  {facility.CityName}");
             }
             Console.Write("Enter the facility ID: ");
-            int FacilityId=Convert.ToInt32(Console.ReadLine());
-            
-            var SeatList = seatManager.Get();
-            int PreviousSeatCount= SeatList.Where(x => x.FacilityId== FacilityId).Count();
-            Console.WriteLine(PreviousSeatCount);
+            int FacilityId = Convert.ToInt32(Console.ReadLine());
 
             Console.Write("Enter the number of seats : ");
-            int AddtionalSeatCount=Convert.ToInt32(Console.ReadLine());
-            List<Seat> NewSeatList= new List<Seat>();
-            for(int i=0;i<AddtionalSeatCount;i++)
-            {
-                NewSeatList.Add(new Seat()
-                {
-                    SeatNo = string.Format("S{0:D3}", ++PreviousSeatCount),
-                    EmployeeId = null,
-                    FacilityId = FacilityId,
-                });
-            }
-            
+            int AddtionalSeatCount = Convert.ToInt32(Console.ReadLine());
 
+            var seatDTO = new SeatDTO()
+            {
+                FacilityId = FacilityId,
+                Capacity = AddtionalSeatCount
+            };
             
-            seatManager.BulkAdd(NewSeatList);
+            seatManager.Add(seatDTO);
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
         }

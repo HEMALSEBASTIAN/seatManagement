@@ -5,6 +5,6 @@ namespace SeatManagement.DTO
     public class SeatDTO
     {
         public int FacilityId { get; set; }
-        public string SeatNo { get; set; }
+        public int Capacity { get; set; }
     }
 }

@@ -9,22 +9,21 @@ namespace SeatManagement.Controllers
     [ApiController]
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentService _repositary;
+        private readonly IDepartmentService _departmentService;
 
-        public DepartmentController(IDepartmentService respositary)
+        public DepartmentController(IDepartmentService departmentService)
         {
-            _repositary = respositary;
+            _departmentService = departmentService;
         }
         [HttpGet] //get all department details
         public IActionResult Get()
         {
-            return Ok(_repositary.Get());
+            return Ok(_departmentService.Get());
         }
         [HttpPost] //adding a department
         public IActionResult Post(DepartmentDTO departmentDTO)
         {
-            int departmentId=_repositary.Add(departmentDTO);
-            return Ok("Added successfully");
+            return Ok(_departmentService.Add(departmentDTO));
         }
     }
 }

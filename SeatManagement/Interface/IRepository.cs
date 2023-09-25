@@ -1,6 +1,6 @@
 ﻿namespace SeatManagement.Interface
 {
-    public interface IRepositary<T> where T : class
+    public interface IRepository<T> where T : class
     {
         public void Add(T item);
         public void Add(List<T> items);

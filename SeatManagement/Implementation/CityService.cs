@@ -3,16 +3,21 @@ using SeatManagement.Interface;
 using SeatManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using SeatManagement.CustomException;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace SeatManagement.Implementation
 {
     public class CityService : ICityService
     {
-        private readonly IRepositary<LookUpCity> _repositary;
-
-        public CityService(IRepositary<LookUpCity> repositary)
+        private readonly IRepository<LookUpCity> _repository;
+        private readonly IMemoryCache _memoryCache;
+        
+        public CityService(
+            IRepository<LookUpCity> repository,
+            IMemoryCache memoryCache)
         {
-            _repositary=repositary;
+            _repository=repository;
+            _memoryCache=memoryCache;
         }
         public int Add(LookUpCityDTO cityDTO)
         {
@@ -21,31 +26,35 @@ namespace SeatManagement.Implementation
                 CityName = cityDTO.CityName,
                 CityAbbrevation = cityDTO.CityAbbrevation
             };
-            _repositary.Add(City);
+            _repository.Add(City);
+            _memoryCache.Remove(FacilityService.Facilitykey);
             return City.CityId;
         }
 
-        public List<LookUpCity> Get()
+        public IQueryable<LookUpCity> Get()
         {
-            return _repositary.GetAll().ToList();
+            var cityList = _repository.GetAll();
+            if ( cityList==null || !cityList.Any())
+                throw new NoDataException("No cities found\nPlease add city first");
+            return cityList;
         }
-
-        //public LookUpCity GetById(int id)
-        //{
-        //    var item = _repositary.GetById(id);
-        //    return item;
-        //}
-        //public LookUpCity Update(int id, LookUpCityDTO City)
-        //{
-        //    var item = _repositary.GetById(id);
-        //    if (item == null)
-        //    {
-        //        return null;
-        //    }
-        //    item.CityName = City.CityName;
-        //    item.CityAbbrevation = City.CityAbbrevation;
-        //    _repositary.Update();
-        //    return item;
-        //}
     }
 }
+
+//public LookUpCity GetById(int id)
+//{
+//    var item = _repositary.GetById(id);
+//    return item;
+//}
+//public LookUpCity Update(int id, LookUpCityDTO City)
+//{
+//    var item = _repositary.GetById(id);
+//    if (item == null)
+//    {
+//        return null;
+//    }
+//    item.CityName = City.CityName;
+//    item.CityAbbrevation = City.CityAbbrevation;
+//    _repositary.Update();
+//    return item;
+//}

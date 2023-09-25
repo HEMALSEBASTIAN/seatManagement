@@ -4,11 +4,11 @@ namespace SeatManagement.Interface
 {
     public interface IMeetingRoomService
     {
-        public void Add(List<MeetingRoomDTO> meetingRoomDTOList);
-        public List<ViewAllocationDTO> GetAll();
+        public void Add(MeetingRoomDTO meetingRoomDTO);
+        public IQueryable<ViewAllocationDTO> GetAll();
         public MeetingRoom GetById(int id);
         public MeetingRoom Update(MeetingRoom meetingRoom);
-        public List<MeetingRoom> GetMeetingRoomByFacility(int  facilityId);
-        public void AllocateAsset(int MeetingRoomId, MeetingRoomAsset newAsset);
+        public IQueryable<MeetingRoom> GetMeetingRoomByFacility(int  facilityId);
+        public void AllocateAsset(int MeetingRoomId, MeetingRoomAssetDTO newAsset);
     }
 }

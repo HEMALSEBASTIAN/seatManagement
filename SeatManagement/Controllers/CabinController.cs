@@ -10,81 +10,41 @@ namespace SeatManagement.Controllers
     [ApiController]
     public class CabinController : Controller
     {
-        private readonly ICabinService _repositary;
+        private readonly ICabinService _cabinService;
 
-        public CabinController(ICabinService repositary)
+        public CabinController(ICabinService cabinService)
         {
-            _repositary = repositary;
+            _cabinService = cabinService;
         }
         [HttpGet] //Get all cabin
         public IActionResult Get()
         {
-            return Ok(_repositary.Get());
+            return Ok(_cabinService.Get());
         }
         [HttpPost] //Adding cabin in bulk
-        public IActionResult Post(List<CabinDTO> cabinDTOList)
+        public IActionResult Post(CabinDTO cabinDTO)
         {
-            _repositary.AddCabin(cabinDTOList);
-            return Ok();
+            _cabinService.AddCabin(cabinDTO);
+            return Ok($"{cabinDTO.Capacity} cabins added successfully");   
         }
         [HttpPatch("{cabinId}")] //For Allocating and deallocating cabin
         public IActionResult Allocate(int cabinId, int? employeeId)
         {
-            try
-            {
-                if (employeeId.HasValue)
-                {
-                    _repositary.AllocateCabin(cabinId, employeeId.Value);
-                }
-                else
-                {
-                    _repositary.DeallocateCabin(cabinId);
-                }
-                return Ok();
-            }
-            catch (NoDataException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (EmployeeAlreadyAllocatedException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (AllocationException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
+            if (employeeId.HasValue)
+                _cabinService.AllocateCabin(cabinId, employeeId.Value);
+            else
+                _cabinService.DeallocateCabin(cabinId);
+            return Ok();
         }
         [HttpGet("{id}")] //get cab by id
         public IActionResult Get(int id)
         {
-            var item = _repositary.GetById(id);
-            if (item == null)
-                return NotFound();
-            return Ok(item);
+            return Ok(_cabinService.GetById(id));
         }
-
         [HttpGet("report")]
-        public IActionResult Report(int? facilityId, int? floorNo)
+        public IActionResult Report(string? type, int? facilityId, int? floorNo)
         {
-            try
-            {
-                if (facilityId.HasValue)
-                    return Ok(_repositary.GetCabinUnAllocatedViewByFacility(facilityId.Value));
-                else if(floorNo.HasValue)
-                    return Ok(_repositary.GetCabinUnAllocatedViewByFloor(floorNo.Value));
-                else
-                    return Ok(_repositary.GetCabinUnAllocatedView());
-            }
-            catch(NoDataException ex)
-            {
-                return NotFound(ex.Message);
-            }
+            return Ok(_cabinService.ReportGenarator(type, facilityId, floorNo));
         }
     }
 }

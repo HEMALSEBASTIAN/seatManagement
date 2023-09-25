@@ -18,7 +18,7 @@ namespace SeatManagementConsole.View
         public void DoWork()
         {
             Console.WriteLine("-----------------Cabin Allocation System-----------------");
-            IEntityManager<ViewAllocationDTO> ViewAllocationManager = new EntityManager<ViewAllocationDTO>("api/Report?type=cabin&&action=ViewUnAllocatedCabin");
+            IEntityManager<ViewAllocationDTO> ViewAllocationManager = new EntityManager<ViewAllocationDTO>("api/cabin/report");
             IEntityManager <Employee> EmployeeManager = new EntityManager<Employee>("api/Employee");
             IAllocationManager<Cabin> CabinManager = new AllocationManager<Cabin>("api/cabin");
 
@@ -44,9 +44,9 @@ namespace SeatManagementConsole.View
             
             int response=CabinManager.Allocate(CabinId, EmployeeId);
             if (response == 0)
-                Console.WriteLine("Cabin allocation successfull");
+                Console.WriteLine("Cabin allocation successful");
             else
-                Console.WriteLine("Cabin allocation unsuccessfull");
+                Console.WriteLine("Cabin allocation unsuccessful");
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
         }

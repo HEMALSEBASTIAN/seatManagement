@@ -6,6 +6,6 @@ namespace SeatManagement.Interface
     public interface IBuildingService
     {
         public int Add(LookUpBuildingDTO buildingDTO);
-        public List<LookUpBuilding> Get();
+        public IQueryable<LookUpBuilding> Get();
     }
 }

@@ -16,7 +16,7 @@ namespace SeatManagementConsole.View
 
         public void DoWork()
         {
-            IEntityManager<ViewAllocationDTO> ViewAllocationManager = new EntityManager<ViewAllocationDTO>("api/Report?type=seat&&action=ViewAllocatedSeat");
+            IEntityManager<ViewAllocationDTO> ViewAllocationManager = new EntityManager<ViewAllocationDTO>("api/seat/report?type=allocated");
             IAllocationManager<Seat> SeatAllocationManager = new AllocationManager<Seat>("api/seat");
 
             Console.WriteLine("-----------------Seat Allocation System-----------------");
@@ -35,10 +35,10 @@ namespace SeatManagementConsole.View
             {
                 var AllocatedSeat = AllocatedSeatList.Where(x => x.SeatId == SeatId).FirstOrDefault();
                 Console.WriteLine($"{AllocatedSeat.EmployeeName} has been deallocated from seat no: {AllocatedSeat.SeatNo}");
-                Console.WriteLine("Seat deallocation successfull");
+                Console.WriteLine("Seat deallocation successful");
             }            
             else
-                Console.WriteLine("Seat deallocation unsuccessfull");
+                Console.WriteLine("Seat deallocation unsuccessful");
                   
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();

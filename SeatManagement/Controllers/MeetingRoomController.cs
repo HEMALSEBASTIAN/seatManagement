@@ -16,6 +16,7 @@ namespace SeatManagement.Controllers
         {
             _repositary = repositary;
         }
+
         [HttpGet]  //Get all meeting room details with city and building name
         public IActionResult Get()
         {
@@ -23,19 +24,19 @@ namespace SeatManagement.Controllers
         }
         
         [HttpPost]  //Add meeting room on bulk
-        public IActionResult Post(List<MeetingRoomDTO> meetingRoomDTOList)
+        public IActionResult Post(MeetingRoomDTO meetingRoomDTO)
         {
-            _repositary.Add(meetingRoomDTOList);
-            return Ok();
+            _repositary.Add(meetingRoomDTO);
+            return Ok($"{meetingRoomDTO.MeetingRoomCount} meeting rooms added successfully");
         }
 
-        [HttpPost("{MeetingRoomId}")]
-        public IActionResult AllocateAsset(int MeetingRoomId, MeetingRoomAsset newAsset)
+        [HttpPost("{MeetingRoomId}")] //adding asset to meeting room
+        public IActionResult AllocateAsset(int MeetingRoomId, MeetingRoomAssetDTO newAsset)
         {
             try
             {
                 _repositary.AllocateAsset(MeetingRoomId, newAsset);
-                return Ok();
+                return Ok("Asset allocated to meeting room ");
             }
             catch(ForeignKeyViolationException ex)
             {
@@ -44,37 +45,15 @@ namespace SeatManagement.Controllers
         }
 
 
-
-
-
-
-
-
-        [Route("id")]
-        [HttpGet]  //Get meeting room by details
-        public IActionResult Get(int id)
-        {
-            var item = _repositary.GetById(id);
-            if (item == null)
-            {
-                return NotFound("Meeting room not found");
-            }
-            return Ok(item);
-        }
-
-        [Route("id")]  //updating meeting room details
-        [HttpPatch] 
+        [HttpPatch("{id}")]  //updating a meeting room detail
         public IActionResult Update(MeetingRoom meetingRoom)
         {
             var item = _repositary.Update(meetingRoom);
-            if(item == null)
-            {
-                return NotFound("Meeting room not found");
-            }
-            return Ok();
+            return Ok("Meeting room updated successfully");
         }
 
-        [HttpGet("FacilityId")]  //return all meeting room in a particular facility
+
+        [HttpGet("{facilityId}")]  //return all meeting room in a particular facility
         public IActionResult GetMeetingRoomByFacility(int facilityId)
         {
             var item = _repositary.GetMeetingRoomByFacility(facilityId);
@@ -82,3 +61,11 @@ namespace SeatManagement.Controllers
         }
     }
 }
+
+
+
+//[HttpGet("{id}")]  //Get meeting room by details
+//public IActionResult Get(int id)
+//{
+//    return Ok(_repositary.GetById(id));
+//}

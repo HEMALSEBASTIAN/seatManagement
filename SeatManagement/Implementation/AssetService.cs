@@ -1,4 +1,5 @@
-﻿using SeatManagement.CustomException;
+﻿using Microsoft.Data.SqlClient;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
@@ -7,37 +8,28 @@ namespace SeatManagement.Implementation
 {
     public class AssetService : IAssetService
     {
-        private readonly IRepositary<LookUpAsset> _repositary;
+        private readonly IRepository<LookUpAsset> _repository;
 
-        public AssetService(IRepositary<LookUpAsset> repositary)
+        public AssetService(IRepository<LookUpAsset> repository)
         {
-            _repositary=repositary;
-        }
-        public int Add(LookUpAssetDTO assetDTO)
-        {
-            var item = new LookUpAsset()
-            {
-                AssetName = assetDTO.AssetName
-            };
-            _repositary.Add(item);
-            return item.AssetId;
+            _repository=repository;
         }
 
         public void Add(List<LookUpAssetDTO> assetDTOList)
         {
-            List<LookUpAssetDTO> uniqueAssetDTOList = assetDTOList
+            var uniqueAssetDTOList = assetDTOList
             .GroupBy(a => a.AssetName, StringComparer.OrdinalIgnoreCase)
-            .Select(g => g.First())
-            .ToList(); //To get unique asset names.
+            .Select(g => g.First()); //To get unique asset names.
 
 
             List<LookUpAsset> newAssetList = new List<LookUpAsset>();
-            var currentAssetList = _repositary.GetAll().ToList();
-            foreach(var asset in uniqueAssetDTOList)
+            
+            var currentAssetList = _repository.GetAll();
+           
+            foreach (var asset in uniqueAssetDTOList)
             {
-                var item = currentAssetList.FirstOrDefault(x =>
-                           string.Equals(x.AssetName, asset.AssetName, StringComparison.OrdinalIgnoreCase));
-                if (item==null)
+                var item = currentAssetList?.Where(x => x.AssetName == asset.AssetName ).FirstOrDefault();
+                if (item == null)
                 {
                     newAssetList.Add(new LookUpAsset()
                     {
@@ -45,12 +37,27 @@ namespace SeatManagement.Implementation
                     });
                 };
             }
-            _repositary.Add(newAssetList);
+            
+            _repository.Add(newAssetList);
         }
 
-        public List<LookUpAsset> Get()
+        public IQueryable<LookUpAsset> Get()
         {
-            return _repositary.GetAll().ToList();
+            var assetList= _repository.GetAll();
+
+            if (assetList==null || !assetList.Any())
+                throw new NoDataException("No asset found\nPlease add asset first");
+            return assetList;
         }
     }
 }
+
+//public int Add(LookUpAssetDTO assetDTO)
+//{
+//    var item = new LookUpAsset()
+//    {
+//        AssetName = assetDTO.AssetName
+//    };
+//    _repositary.Add(item);
+//    return item.AssetId;
+//}

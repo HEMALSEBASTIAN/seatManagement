@@ -15,34 +15,53 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IRepositary<LookUpAsset>, Repositary<LookUpAsset>>();
-builder.Services.AddScoped<IRepositary<LookUpBuilding>, Repositary<LookUpBuilding>>();
-builder.Services.AddScoped<IRepositary<LookUpCity>, Repositary<LookUpCity>>();
-builder.Services.AddScoped<IRepositary<Department>, Repositary<Department>>();
-builder.Services.AddScoped<IRepositary<Facility>, Repositary<Facility>>();
-builder.Services.AddScoped<IRepositary<Employee>, Repositary<Employee>>();
-builder.Services.AddScoped<IRepositary<Seat>, Repositary<Seat>>();
-builder.Services.AddScoped<IRepositary<Cabin>, Repositary<Cabin>>();
-builder.Services.AddScoped<IRepositary<MeetingRoom>, Repositary<MeetingRoom>>();
-builder.Services.AddScoped<IRepositary<MeetingRoomAsset>, Repositary<MeetingRoomAsset>>();
-builder.Services.AddScoped<IRepositary<VUnAllocatedSeat>, Repositary<VUnAllocatedSeat>>();
-builder.Services.AddScoped<IRepositary<VFacility>, Repositary<VFacility>>();
+builder.Services.AddSingleton<IRepository<LookUpAsset>, Repository<LookUpAsset>>();
+builder.Services.AddSingleton<IRepository<LookUpBuilding>, Repository<LookUpBuilding>>();
+builder.Services.AddSingleton<IRepository<LookUpCity>, Repository<LookUpCity>>();
+builder.Services.AddSingleton<IRepository<Department>, Repository<Department>>();
+builder.Services.AddSingleton<IRepository<Facility>, Repository<Facility>>();
+builder.Services.AddSingleton<IRepository<Employee>, Repository<Employee>>();
+builder.Services.AddSingleton<IRepository<Seat>, Repository<Seat>>();
+builder.Services.AddSingleton<IRepository<Cabin>, Repository<Cabin>>();
+builder.Services.AddSingleton<IRepository<MeetingRoom>, Repository<MeetingRoom>>();
+builder.Services.AddSingleton<IRepository<MeetingRoomAsset>, Repository<MeetingRoomAsset>>();
 
-builder.Services.AddScoped<IAssetService, AssetService>();
-builder.Services.AddScoped<IBuildingService, BuildingService>();
-builder.Services.AddScoped<ICityService, CityService>();
-builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<ISeatService, SeatService>();
-builder.Services.AddScoped<IFacilityService, FacilityService>();
-builder.Services.AddScoped<IMeetingRoomService, MeetingRoomService>();
-builder.Services.AddScoped<IMeetingRoomAssetService, MeetingRoomAssetService>();
-builder.Services.AddScoped<ICabinService, CabinService>();
-builder.Services.AddScoped<IReportService, ReportService>();
+//builder.Services.AddScoped<IRepository<VUnAllocatedSeat>, Repository<VUnAllocatedSeat>>();
+//builder.Services.AddScoped<IRepository<VFacility>, Repository<VFacility>>();
+
+builder.Services.AddSingleton<IAssetService, AssetService>();
+builder.Services.AddSingleton<IBuildingService, BuildingService>();
+builder.Services.AddSingleton<ICityService, CityService>();
+builder.Services.AddSingleton<IDepartmentService, DepartmentService>();
+builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
+builder.Services.AddSingleton<ISeatService, SeatService>();
+builder.Services.AddSingleton<IFacilityService, FacilityService>();
+builder.Services.AddSingleton<IMeetingRoomService, MeetingRoomService>();
+builder.Services.AddSingleton<IMeetingRoomAssetService, MeetingRoomAssetService>();
+builder.Services.AddSingleton<ICabinService, CabinService>();
+//builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddDbContext<SeatManagementContext>(options=>
-options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
+options.UseSqlServer("name=ConnectionStrings:DefaultConnection"), ServiceLifetime.Singleton);
+
+builder.Services.AddAuthentication("MyCookie").AddCookie("MyCookie", options =>
+{
+    options.Cookie.Name = "MyCookie";
+    options.ExpireTimeSpan = TimeSpan.FromSeconds(300);
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("User", policy =>
+    policy.RequireRole("User"));
+});
+
 
 var app = builder.Build();
 
@@ -52,10 +71,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseExceptionHandler("/exception");
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

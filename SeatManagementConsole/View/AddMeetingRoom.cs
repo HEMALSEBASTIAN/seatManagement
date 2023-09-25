@@ -18,7 +18,7 @@ namespace SeatManagementConsole.View
         {
             Console.Clear();
             IEntityManager<ViewFacilityDTO> ViewFacilityManager = new EntityManager<ViewFacilityDTO>("api/Facility");
-            IEntityManager<MeetingRoom> meetManager = new EntityManager<MeetingRoom>("api/MeetingRoom");
+            IEntityManager<MeetingRoomDTO> meetManager = new EntityManager<MeetingRoomDTO>("api/MeetingRoom");
 
             Console.WriteLine("Available Office Locations");
             var FacilityList = ViewFacilityManager.Get();
@@ -30,28 +30,28 @@ namespace SeatManagementConsole.View
             Console.Write("Enter the facility ID: ");
             int FacilityId = Convert.ToInt32(Console.ReadLine());
 
-            var MeetingRoomList = meetManager.Get();
-            int PreviousMeetingRoomCount = MeetingRoomList.Where(x => x.FacilityId == FacilityId).Count();
-            Console.WriteLine(PreviousMeetingRoomCount);
+            
 
             Console.Write("Enter the number of meeting rooms : ");
             int AddtionalMeetingRoomCount = Convert.ToInt32(Console.ReadLine());
-            List<MeetingRoom> NewMeetingRoomList = new List<MeetingRoom>();
+
+            int[] seatCount = new int[AddtionalMeetingRoomCount];
             for (int i = 0; i < AddtionalMeetingRoomCount; i++)
             {
-                Console.Write("Ente meeting room capacity for "+ string.Format("M{0:D3}", ++PreviousMeetingRoomCount) + ": ");
-                int newMeetingRoomCapacity=Convert.ToInt32(Console.ReadLine());
-                NewMeetingRoomList.Add(new MeetingRoom()
-                {
-                    MeetingRoomNo = string.Format("M{0:D3}", PreviousMeetingRoomCount),
-                    TotalSeat = newMeetingRoomCapacity,
-                    FacilityId = FacilityId,
-                });
+                Console.Write("Enter meeting room capacity for "+(i+1)+": ");
+                seatCount[i]=(Convert.ToInt32(Console.ReadLine()));
             }
 
+            MeetingRoomDTO NewMeetingRooms = new MeetingRoomDTO()
+            {
+                FacilityId= FacilityId,
+                MeetingRoomCount=AddtionalMeetingRoomCount,
+                TotalSeat=seatCount
+            };
 
 
-            meetManager.BulkAdd(NewMeetingRoomList);
+
+            meetManager.Add(NewMeetingRooms);
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
         }

@@ -3,51 +3,66 @@ using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
+using System.Linq;
 
 namespace SeatManagement.Implementation
 {
     public class SeatService : ISeatService
     {
-        private readonly IRepositary<Seat> _seatRepositary;
-        private readonly IRepositary<Employee> _employeeRepositary;
+        private readonly IRepository<Seat> _seatRepository;
+        private readonly IEmployeeService _employeeService;
+        private readonly IFacilityService _facilityService;
 
-        public SeatService(IRepositary<Seat> seatRepositary, IRepositary<Employee> employeeRepositary)
+        public SeatService(IRepository<Seat> seatRepositary, 
+            IEmployeeService employeeService,
+            IFacilityService facilityService)
         {
-            _seatRepositary = seatRepositary;
-            _employeeRepositary = employeeRepositary;
+            _seatRepository = seatRepositary;
+            _employeeService = employeeService;
+            _facilityService = facilityService;
         }
-        public List<Seat> Get()
-        {
-            return _seatRepositary.GetAll().ToList();
-        }
-        
 
-        public void AddSeat(List<SeatDTO> seatDTOList)
+
+        public IQueryable<Seat> Get(int? pageNumber, int? pageSize)
         {
+            if (pageNumber.HasValue && pageSize.HasValue)
+            {
+                return _seatRepository.GetAll()
+                .Skip((pageNumber.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value);
+            }
+            return _seatRepository.GetAll();
+
+        }
+
+        public void AddSeat(SeatDTO seatDTO)
+        {
+            var facilityList = _facilityService.Get().Select(x => x.FacilityId);
+
+            if (!facilityList.Contains(seatDTO.FacilityId))
+                throw new ForeignKeyViolationException("Entered facility does not exist");
+
+            int PreviousSeatCount = _seatRepository.GetAll().Where(x => x.FacilityId == seatDTO.FacilityId).Count();
             List<Seat> seatList = new List<Seat>();
-            foreach (var seatDTO in seatDTOList)
+            for(int start=0; start<seatDTO.Capacity; start++)
             {
                 seatList.Add(new Seat()
                 {
-                    SeatNo = seatDTO.SeatNo,
+                    SeatNo = string.Format("S{0:D3}", ++PreviousSeatCount),
                     FacilityId = seatDTO.FacilityId,
                     EmployeeId = null
                 });
             }
-            _seatRepositary.Add(seatList);
+            _seatRepository.Add(seatList);
         }
 
         
 
         public void AllocateSeat(int seatId, int employeeId) 
         {
-            var seat = _seatRepositary.GetById(seatId);
-            var employee = _employeeRepositary.GetById(employeeId);
+            var seat = this.GetById(seatId);
+            var employee = _employeeService.GetById(employeeId);
 
-            if (seat == null)
-                throw new NoDataException("Seat does not exist");
-            else if (employee == null)
-                throw new NoDataException("Employee does not exist");
             if (employee.IsAllocated == true)
                 throw new EmployeeAlreadyAllocatedException("Employee already allocated");
             else if (seat.EmployeeId != null)
@@ -55,36 +70,46 @@ namespace SeatManagement.Implementation
 
             seat.EmployeeId = employeeId;
             employee.IsAllocated = true;
-            _seatRepositary.Update();
-            _employeeRepositary.Update();
+            _seatRepository.Update();
+            _employeeService.Update(employee);
         }
 
         
 
         public void DeAllocateSeat(int seatId)
         {
-            var seat = _seatRepositary.GetById(seatId);
+            var seat = this.GetById(seatId);
 
-            if (seat == null)
-                throw new NoDataException("Seat does not exist");
-            else if (seat.EmployeeId == null)
+            if (seat.EmployeeId == null)
                 throw new AllocationException("Seat is not yet allocated!");
 
-            var employee = _employeeRepositary.GetById((int)seat.EmployeeId);
+            var employee = _employeeService.GetById((int)seat.EmployeeId);
             seat.EmployeeId = null;
             employee.IsAllocated = false;
-            _seatRepositary.Update();
-            _employeeRepositary.Update();
+            _seatRepository.Update();
+            _employeeService.Update(employee);
         }
 
         public Seat GetById(int id)
         {
-            return _seatRepositary.GetById(id);
+            var seat= _seatRepository.GetById(id);
+            return seat ?? throw new NoDataException("Entered seat Id does not exist");
         }
 
-        public List<ViewAllocationDTO> GetSeatUnAllocatdViewByFacility(int facilityId)
+        public IQueryable<ViewAllocationDTO> ReportGenarator(string? type, int? facilityId, int? floorNo)
         {
-            var item = _seatRepositary.GetAll()
+            if (type != null && type.Equals("allocated"))
+                return this.GetSeatAllocatedView();
+            else if (facilityId.HasValue)
+                return this.GetSeatUnAllocatdViewByFacility(facilityId.Value);
+            else if (floorNo.HasValue)
+                return this.GetSeatUnAllocatedViewByFloor(floorNo.Value);
+            else
+                return this.GetSeatUnAllocatdView();
+        }
+        public IQueryable<ViewAllocationDTO> GetSeatUnAllocatdViewByFacility(int facilityId)
+        {
+            var item = this.Get(null, null)
                 .Include(x => x.Facility)
                 .Include(x => x.Facility.LookUpBuilding)
                 .Include(x => x.Facility.LookUpCity)
@@ -98,15 +123,15 @@ namespace SeatManagement.Implementation
                     SeatNo = x.SeatNo,
                     BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
                     CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
-                }).ToList();
-            if (item.Count() == 0)
+                });
+            if (!item.Any())
                 throw new NoDataException("No UnAllocated seats");
             return item;
         }
 
-        public List<ViewAllocationDTO> GetSeatUnAllocatdView()
+        public IQueryable<ViewAllocationDTO> GetSeatUnAllocatdView()
         {
-            var item = _seatRepositary.GetAll()
+            var item = this.Get(null, null)
                 .Include(x => x.Facility)
                 .Include(x => x.Facility.LookUpBuilding)
                 .Include(x => x.Facility.LookUpCity)
@@ -120,16 +145,16 @@ namespace SeatManagement.Implementation
                     SeatNo = x.SeatNo,
                     BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
                     CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
-                }).ToList();
-            if (item.Count() == 0)
+                });
+            if (!item.Any())
                 throw new NoDataException("No UnAllocated seats!");
             return item;
         }
 
 
-        public List<ViewAllocationDTO> GetSeatUnAllocatedViewByFloor(int floorNo)
+        public IQueryable<ViewAllocationDTO> GetSeatUnAllocatedViewByFloor(int floorNo)
         {
-            var item = _seatRepositary.GetAll()
+            var item = this.Get(null, null)
                 .Include(x => x.Facility)
                 .Include(x => x.Facility.LookUpBuilding)
                 .Include(x => x.Facility.LookUpCity)
@@ -143,20 +168,37 @@ namespace SeatManagement.Implementation
                     SeatNo = x.SeatNo,
                     BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
                     CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
-                }).ToList();
-            if (item.Count() == 0)
+                });
+            if (!item.Any())
                 throw new NoDataException("No UnAllocated seats!");
             return item;
         }
 
-
-        public List<Seat> Get(int pageNumber, int pageSize)
+        public IQueryable<ViewAllocationDTO> GetSeatAllocatedView()
         {
-            return _seatRepositary.GetAll()
-                .Skip((pageNumber-1)*pageSize)
-                .Take(pageSize)
-                .ToList();
+            var item = this.Get(null, null)
+                .Include(x => x.Facility)
+                .Include(x => x.Facility.LookUpBuilding)
+                .Include(x => x.Facility.LookUpCity)
+                .Include(x => x.Employee)
+                .Where(x => x.EmployeeId != null)
+                .Select(x => new ViewAllocationDTO
+                {
+                    FacilityName = x.Facility.FacilityName,
+                    FacilityFloor = x.Facility.FacilityFloor,
+                    SeatId = x.SeatId,
+                    SeatNo = x.SeatNo,
+                    EmployeeName = x.Employee.EmployeeName,
+                    EmployeeId = x.Employee.EmployeeId,
+                    BuildingAbbrevation = x.Facility.LookUpBuilding.BuildingAbbrevation,
+                    CityAbbrevation = x.Facility.LookUpCity.CityAbbrevation
+                });
+            if (!item.Any())
+                throw new NoDataException("No seats are allocated yet!");
+            return item;
         }
+
+        
     }
 }
 

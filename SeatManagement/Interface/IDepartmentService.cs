@@ -6,6 +6,6 @@ namespace SeatManagement.Interface
     public interface IDepartmentService
     {
         public int Add(DepartmentDTO departmentDTO);
-        public List<Department> Get();
+        public IQueryable<Department> Get();
     }
 }

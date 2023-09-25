@@ -7,9 +7,9 @@ namespace SeatManagement.Implementation
 {
     public class MeetingRoomAssetService : IMeetingRoomAssetService
     {
-        private readonly IRepositary<MeetingRoomAsset> _repositary;
+        private readonly IRepository<MeetingRoomAsset> _repositary;
 
-        public MeetingRoomAssetService(IRepositary<MeetingRoomAsset> repositary)
+        public MeetingRoomAssetService(IRepository<MeetingRoomAsset> repositary)
         {
             _repositary=repositary;
         }
@@ -18,7 +18,7 @@ namespace SeatManagement.Implementation
             var item = new MeetingRoomAsset()
             {
                 AssetId = meetingRoomAssetDTO.AssetId,
-                MeetingRoomId = meetingRoomAssetDTO.MeetingRoomId,
+                MeetingRoomId = (int)meetingRoomAssetDTO.MeetingRoomId,
                 AssetQuantity = meetingRoomAssetDTO.AssetQuantity,
             };
             _repositary.Add(item);
@@ -28,8 +28,6 @@ namespace SeatManagement.Implementation
         {
             return _repositary.GetAll().ToList();
         }
-        //get join of meetingroomasset and lookupasset
-        //get join of meetingroomasset and lookupasset
         public List<MeetingRoomAssetNameDTO> GetAll(int MeetingRoomId)
         {
             var item = _repositary.GetAll()

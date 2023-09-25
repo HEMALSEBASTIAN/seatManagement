@@ -5,7 +5,8 @@ namespace SeatManagement.DTO
     public class MeetingRoomDTO
     {
         public int FacilityId { get; set; }
-        public string MeetingRoomNo { get; set; }
-        public int TotalSeat { get; set; }
+        //public string MeetingRoomNo { get; set; }
+        public int[] TotalSeat { get; set; }
+        public int MeetingRoomCount { get; set;}
     }
 }

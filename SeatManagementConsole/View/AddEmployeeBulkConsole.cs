@@ -14,7 +14,7 @@ namespace SeatManagementConsole.View
     {
         public int AddType => 1;
 
-        public List<Employee> Add()
+        public List<Employee>? Add()
         {
             int choice;
             IEntityManager<Department> departmentManager = new EntityManager<Department>("api/Department");
@@ -26,28 +26,24 @@ namespace SeatManagementConsole.View
 
                 Console.WriteLine("Available department");
                 var departmentList = departmentManager.Get();
-                foreach(var department in departmentList)
+                if(!departmentList.Any())
+                {
+                    Console.WriteLine("Press enter to continue");
+                    Console.ReadLine();
+                    return default;
+                }
+                foreach (var department in departmentList)
                 {
                     Console.WriteLine($"{department.DepartmentId}  {department.DepartmentName}");
                 }
-                while(true)
+
+                Console.Write("Enter the depaartment Id : ");
+                int departmentId = Convert.ToInt32(Console.ReadLine());
+                employeeList.Add(new Employee()
                 {
-                    Console.Write("Enter the depaartment Id : ");
-                    int departmentId = Convert.ToInt32(Console.ReadLine());
-                    if (departmentList.Any(x => x.DepartmentId == departmentId))
-                    {
-                        employeeList.Add(new Employee()
-                        {
-                            EmployeeName = employeeName,
-                            DepartmentId = departmentId
-                        });
-                        break;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Ente correct department Id");
-                    }
-                }
+                    EmployeeName = employeeName,
+                    DepartmentId = departmentId
+                });
 
                 Console.WriteLine("Do you want to add more employee (0/1): ");
                 choice=Convert.ToInt32(Console.ReadLine());

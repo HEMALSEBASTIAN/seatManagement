@@ -36,7 +36,7 @@ namespace SeatManagementConsole.View
             var AssetList = AssetManager.Get();
             if (AssetList.Count() == 0)
             {
-                Console.WriteLine("Please add asset first\nPress enter to continue");
+                Console.WriteLine("Press enter to continue");
                 Console.ReadLine();
                 return;
             }
@@ -50,14 +50,13 @@ namespace SeatManagementConsole.View
             Console.Write("Enter the quantity to add : ");
 
             int newAssetQuantity = Convert.ToInt32(Console.ReadLine());
-            var newAssetAllocation = new MeetingRoomAsset()
+            var newAssetAllocation = new MeetingRoomAssetDTO()
             {
                 AssetQuantity = newAssetQuantity,
                 AssetId = newAssetId,
-                MeetingRoomId = MeetingRoomId
             };
 
-            IEntityManager<MeetingRoomAsset> MeetingRoomManager = new EntityManager<MeetingRoomAsset>("api/MeetingRoom/"+ MeetingRoomId);
+            IEntityManager<MeetingRoomAssetDTO> MeetingRoomManager = new EntityManager<MeetingRoomAssetDTO>("api/MeetingRoom/"+ MeetingRoomId);
             MeetingRoomManager.Add(newAssetAllocation);
 
             Console.WriteLine("Press enter to continue");

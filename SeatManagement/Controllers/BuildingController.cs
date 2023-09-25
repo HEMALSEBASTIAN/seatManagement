@@ -10,22 +10,21 @@ namespace SeatManagement.Controllers
     [ApiController]
     public class BuildingController : Controller
     {
-        private readonly IBuildingService _repositary;
+        private readonly IBuildingService _buildingService;
 
-        public BuildingController(IBuildingService repositary)
+        public BuildingController(IBuildingService buildingService)
         {
-            _repositary=repositary;
+            _buildingService=buildingService;
         }
         [HttpGet] //getting the building details
         public IActionResult Get()
         {
-            return Ok(_repositary.Get());
+            return Ok(_buildingService.Get());
         }
         [HttpPost] //Adding a building
         public IActionResult Post(LookUpBuildingDTO BuildingDTO) 
         {
-            int BuildingId= _repositary.Add(BuildingDTO);
-            return Ok(BuildingId);
+            return Ok(_buildingService.Add(BuildingDTO));
         }
     }
 }

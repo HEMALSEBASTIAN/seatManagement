@@ -11,46 +11,42 @@ namespace SeatManagement.Controllers
     public class CityController : Controller
     {
 
-        private readonly ICityService _repositary;
-        public CityController(ICityService repositary)
+        private readonly ICityService _cityService;
+        public CityController(ICityService cityService)
         {
-            this._repositary = repositary;
+            this._cityService = cityService;
         }
         [HttpGet] //Get all city details
         public IActionResult Get()
         {
-            return Ok(_repositary.Get());
+            return Ok(_cityService.Get());
         }
         [HttpPost] //Adding a city
         public IActionResult Post(LookUpCityDTO CityDTO)
         {
-            int CityId=_repositary.Add(CityDTO);   
-            return Ok(CityId);
+            return Ok(_cityService.Add(CityDTO));  
         }
-        
-        
-  
-        
-        //[HttpGet("{id}")] //get city details by id
-        //public IActionResult Get(int id) 
-        //{
-        //    var item=_repositary.GetById(id);
-        //    if(item == null) 
-        //        return NotFound();
-        //    return Ok(item);
-        //}
-
-
-
-        //[HttpPatch("{id}")] //Update city by id
-        //public IActionResult Update(int id, LookUpCityDTO City)
-        //{
-        //    var item = _repositary.Update(id,City);
-        //    if(item == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(); 
-        //}
     }
 }
+
+//[HttpGet("{id}")] //get city details by id
+//public IActionResult Get(int id) 
+//{
+//    var item=_repositary.GetById(id);
+//    if(item == null) 
+//        return NotFound();
+//    return Ok(item);
+//}
+
+
+
+//[HttpPatch("{id}")] //Update city by id
+//public IActionResult Update(int id, LookUpCityDTO City)
+//{
+//    var item = _repositary.Update(id,City);
+//    if(item == null)
+//    {
+//        return NotFound();
+//    }
+//    return Ok(); 
+//}

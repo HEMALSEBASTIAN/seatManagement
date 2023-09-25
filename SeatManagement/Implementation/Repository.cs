@@ -3,12 +3,12 @@ using SeatManagement.Interface;
 
 namespace SeatManagement.Implementation
 {
-    public class Repositary<T> : IRepositary<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly SeatManagementContext _context;
         private readonly DbSet<T> _DbSet;
 
-        public Repositary(SeatManagementContext context)
+        public Repository(SeatManagementContext context)
         {
             _context = context;
             _DbSet = _context.Set<T>();
@@ -20,16 +20,8 @@ namespace SeatManagement.Implementation
         }
         public void Add(List<T> items)
         { 
-            try
-            {
-                _DbSet.AddRange(items);
-                _context.SaveChanges();
-                Console.WriteLine("Added");
-            }
-            catch (DbUpdateException)
-            {
-                Console.WriteLine("Exception is thrown");
-            }
+            _DbSet.AddRange(items);
+            _context.SaveChanges();
         }
         public IQueryable<T>? GetAll()
         {

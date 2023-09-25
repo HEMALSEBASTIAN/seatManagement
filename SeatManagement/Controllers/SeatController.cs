@@ -11,85 +11,50 @@ namespace SeatManagement.Controllers
     [ApiController]
     public class SeatController : Controller
     {
-        private readonly ISeatService _repositary;
+        private readonly ISeatService _seatService;
 
-        public SeatController(ISeatService repositary)
+        public SeatController(ISeatService seatService)
         {
-            _repositary=repositary;
+            _seatService=seatService;
         }
         [HttpGet] //Getting All Seats
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] int? pageNumber, [FromQuery] int? pageSize)
         {
-            return Ok(_repositary.Get());
+            return Ok(_seatService.Get(pageNumber, pageSize));
         }
 
         [HttpPost] //Adding seat in bulk
-        public IActionResult Post(List <SeatDTO> seatDTOList)
+        public IActionResult Post(SeatDTO seatDTO)
         {
-            _repositary.AddSeat(seatDTOList);
-            return Ok();
+            _seatService.AddSeat(seatDTO);
+            return Ok($"{seatDTO.Capacity} seats added succcessfully");
         }
 
         [HttpGet("report")]
-        public IActionResult Report(int? facilityId, int? floorNo)
+        public IActionResult Report(string? type, int? facilityId, int? floorNo)
         {
-            try
-            {
-                if (facilityId.HasValue)
-                    return Ok(_repositary.GetSeatUnAllocatdViewByFacility(facilityId.Value));
-                else if (floorNo.HasValue)
-                    return Ok(_repositary.GetSeatUnAllocatedViewByFloor(floorNo.Value));
-                else
-                    return Ok(_repositary.GetSeatUnAllocatdView());
-
-                
-            }
-            catch (NoDataException ex)
-            {
-                return NotFound(ex.Message);
-            }
-
+            return Ok(_seatService.ReportGenarator(type, facilityId, floorNo));
         }
         
         [HttpPatch("{seatId}")] //For allocating or deallocating seat
         public IActionResult Allocate(int seatId, int? employeeId)
         {
-            try
+            if(employeeId.HasValue)
             {
-                if(employeeId.HasValue)
-                {
-                    _repositary.AllocateSeat(seatId, employeeId.Value);
-                }
-                else
-                {
-                    _repositary.DeAllocateSeat(seatId);
-                }
-                return Ok();
+                _seatService.AllocateSeat(seatId, employeeId.Value);
             }
-            catch(NoDataException ex)
+            else
             {
-                return NotFound(ex.Message);
+                _seatService.DeAllocateSeat(seatId);
             }
-            catch(EmployeeAlreadyAllocatedException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch(AllocationException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch(Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-
+            return Ok();
         }
 
         
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var item = _repositary.GetById(id);
+            var item = _seatService.GetById(id);
             if (item == null)
             {
                 return NotFound();

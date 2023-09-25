@@ -1,4 +1,5 @@
-﻿using SeatManagement.CustomException;
+﻿using Microsoft.Extensions.Caching.Memory;
+using SeatManagement.CustomException;
 using SeatManagement.DTO;
 using SeatManagement.Interface;
 using SeatManagement.Models;
@@ -7,11 +8,14 @@ namespace SeatManagement.Implementation
 {
     public class BuildingService : IBuildingService
     {
-        private readonly IRepositary<LookUpBuilding> _repositary;
-
-        public BuildingService(IRepositary<LookUpBuilding> repositary)
+        private readonly IRepository<LookUpBuilding> _repository;
+        private readonly IMemoryCache _memoryCache;
+        public BuildingService(
+            IRepository<LookUpBuilding> repository,
+            IMemoryCache memoryCache)
         {
-            _repositary = repositary;
+            _repository = repository;
+            _memoryCache = memoryCache;
         }
         public int Add(LookUpBuildingDTO buildingDTO)
         {
@@ -20,13 +24,17 @@ namespace SeatManagement.Implementation
                 BuildingName = buildingDTO.BuildingName,
                 BuildingAbbrevation = buildingDTO.BuildingAbbrevation
             };
-            _repositary.Add(Building);
+            _repository.Add(Building);
+            _memoryCache.Remove(FacilityService.Facilitykey);
             return Building.BuildingId;
         }
 
-        public List<LookUpBuilding> Get()
+        public IQueryable<LookUpBuilding> Get()
         {
-            return _repositary.GetAll().ToList();
+            var buildingList=_repository.GetAll();
+            if (buildingList==null || !buildingList.Any())
+                throw new NoDataException("No builings found\nPlease add builing first");
+            return buildingList;
         }
     }
 }

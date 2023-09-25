@@ -10,6 +10,6 @@ namespace SeatManagementConsole.Interface
     public interface IAddEmployeeBulk
     {
         public int AddType { get; }
-        public List<Employee> Add();
+        public List<Employee>? Add();
     }
 }

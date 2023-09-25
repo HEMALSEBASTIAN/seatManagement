@@ -5,8 +5,8 @@ namespace SeatManagement.Interface
 {
     public interface IAssetService
     {
-        public int Add(LookUpAssetDTO assetDTO);
+        //public int Add(LookUpAssetDTO assetDTO);
         public void Add(List<LookUpAssetDTO> assetDTOList);    
-        public List<LookUpAsset> Get();
+        public IQueryable<LookUpAsset> Get();
     }
 }
